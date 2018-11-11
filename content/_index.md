@@ -8,14 +8,14 @@ Specifically, we aim to evaluate new delay based congestion control algorithms s
 
 <img src="pi_racks.jpg" width="75%" style="margin-left: auto; margin-right: auto; display: block;"/> 
 
-- [Background](/background)
+- [Background](background)
 
     What is delay based congestion control? 
 
-- [Configuration](/config)
+- [Configuration](config)
 
     What did we do to set up this test bed?
 
-- [Validation](/validation)
+- [Validation](validation)
 
     Can we trust this test bed?
