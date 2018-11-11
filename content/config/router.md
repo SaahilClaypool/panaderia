@@ -1,5 +1,5 @@
 ---
-title: "Router"
+title: "The Router"
 date: 2018-11-10T16:45:46-05:00
 weight: 10
 ---
@@ -10,4 +10,4 @@ The router is an ubuntu desktop with 3 nic cards. One card is used for the norma
 
 ## Overview 
 
-The router is configured
+The router is configured using netplan and dhcpd.conf[]
