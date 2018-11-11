@@ -2,6 +2,7 @@ baseURL = "https://saahilclaypool.github.io/panaderia/"
 languageCode = "en-us"
 title = "The Panaderia"
 publishDir = "docs"
+canonifyurls = true
 # theme = "hyde"
 
 [params]

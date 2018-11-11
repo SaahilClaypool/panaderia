@@ -19,8 +19,8 @@
 
 
   
-  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
-  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://saahilclaypool.github.io/panaderia/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="https://saahilclaypool.github.io/panaderia/favicon.ico">
 
   
   <link href="https://saahilclaypool.github.io/panaderia/background/index.xml" rel="alternate" type="application/rss+xml" title="The Panaderia" />
@@ -41,7 +41,7 @@
     <nav>
       <ul class="sidebar-nav">
         <li><a href="https://saahilclaypool.github.io/panaderia/">Home</a> </li>
-        <li><a href="/panaderia/background"> Background </a></li><li><a href="/panaderia/config"> Configuration </a></li><li><a href="/panaderia/validation"> Validation </a></li>
+        <li><a href="https://saahilclaypool.github.io/panaderia/background"> Background </a></li><li><a href="https://saahilclaypool.github.io/panaderia/config"> Configuration </a></li><li><a href="https://saahilclaypool.github.io/panaderia/validation"> Validation </a></li>
       </ul>
     </nav>
 
@@ -51,7 +51,106 @@
 
     <main class="content container">
     
+
+<h2 id="congestion-control">Congestion Control</h2>
+
+<p><em>TCP Congestion Control</em> is responsible for regulating the rate and amount of packets that your computer sends. This is important for regulating the total amount of data in flight in a network  - if every host sends as much data as possible, the routers in the middle will not be able to handle the traffic and thus drop packets.</p>
+
+<p>Traditionally, TCP has used Loss based congestion control, such as <a href="https://en.wikipedia.org/wiki/CUBIC_TCP">TCP Cubic</a>. Generally, these schemes keep sending more data until they see loss in the network. This means that they have hit the maximum throughput of the network, and thus they back off slightly. While this is generally effective at maximizing throughput, this puts unnecessary strain on networks because there are more packets in flight than needed to fully utilize the network.</p>
+
+<p>Routers have queues or buffers to handle excess packets - when a router receives packets at a rate greater than it can retransmit, it will queue these packets into this buffer. When this buffer is filled, the router will simply drop this packet. Because loss based schemes wait until this dropping point to slow down their sending rate, they will <em>always</em> increase until the queue is completely full. If the queues are large, this can greatly increase the round trip time of packets, and reduce the networks&rsquo; resilience to traffic bursts.</p>
+
+<h2 id="delay-based-congestion-control">Delay Based Congestion Control</h2>
+
+<p>Delay based control aims to fix this problem by attempting to send at the maximum rate possible <em>without</em> filling the intermediate buffers. As the number of packets sent by an application increases, its throughput will increase up until the bottleneck routers operating point. Then, these packets will just be queued into the router&rsquo;s buffer or dropped. As the router queue becomes filled, the round trip time for each packet will be increased as they must now wait in this filled queue. This relationship is depicted below.</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/optimal_operating.png" alt="BBR: Optimal Operating Point" />
+<em><a href="https://queue.acm.org/detail.cfm?id=3022184">BBR: Congestion-Based Congestion Control. Neal Cardwell et. al</a></em></p>
+
+<p>In a perfect world, the optimal operating point is at the BDP (bandwidth delay product) which calculates the maximum packets that can be transmitted through a network without excess delay. But, operating at this point reliably in practice is still an active area of research.</p>
+
+<h2 id="background-work">Background Work</h2>
+
 <div class="posts">
+
+  <article>
+    
+    <div>
+      <hr/>
+      <h2><a href="https://saahilclaypool.github.io/panaderia/background/bbr_congestion_based/">BBR: Congestion-Based Congestion Control</a></h2>
+      <blockquote>
+<p>Measuring bottleneck bandwidth and round-trip propagation time</p>
+</blockquote>
+    </div>
+    
+    
+    <div>
+      <a href="https://saahilclaypool.github.io/panaderia/background/bbr_congestion_based/">Read More…</a>
+    </div>
+    
+  
+
+  <article>
+    
+    <div>
+      <hr/>
+      <h2><a href="https://saahilclaypool.github.io/panaderia/background/bbr_experimental/">Experimental Evaluation of BBR Congestion Control</a></h2>
+      <blockquote>
+<p>Mario Hock, Roland Bless, Martina Zitterbart
+Karlsruhe Institute of Technology
+Karlsruhe, Germany</p>
+</blockquote>
+
+<p>Validates BBR with a series of tests. Discusses the following limitations:</p>
+
+<ol>
+<li><p>Estimate of bandwidth is available share.</p></li>
+
+<li><p>Esimate of bandwidth is <em>always</em> too high.</p></li>
+</ol>
+    </div>
+    
+  
+
+  <article>
+    
+    <div>
+      <hr/>
+      <h2><a href="https://saahilclaypool.github.io/panaderia/background/bbr_reproducing_in_lossy/">CS244 2017: ReBBR: Reproducing BBR Performance in Lossy Networks</a></h2>
+      <blockquote>
+<p>Luke Hsia and Jervis Muindi</p>
+</blockquote>
+    </div>
+    
+  
+
+  <article>
+    
+    <div>
+      <hr/>
+      <h2><a href="https://saahilclaypool.github.io/panaderia/background/pcc/">PCC: Re-architecting Congestion Control for Consistent High Performance</a></h2>
+      <blockquote>
+<p>Mo Dong et. al. 15</p>
+</blockquote>
+
+<p>A congestion control protocol using a &lsquo;black-box&rsquo; approach to networks. The algorithm relies on utility functions and mini experiments to adjust sending rate.</p>
+    </div>
+    
+  
+
+  <article>
+    
+    <div>
+      <hr/>
+      <h2><a href="https://saahilclaypool.github.io/panaderia/background/copa/">Copa: Practical Delay-Based Congestion Control for the Internet</a></h2>
+      <blockquote>
+<p>Venkat Arun et. al. NSDI 2018</p>
+</blockquote>
+
+<p>Uses a black-box approach to congestion control similar to PCC. This improves on PCC&rsquo;s experiment idea and includes delay in its utility function.</p>
+    </div>
+    
+  
 
 </div>
     </main>
