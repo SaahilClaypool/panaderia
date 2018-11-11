@@ -51,7 +51,32 @@
 
     <main class="content container">
     
+
+<p>How do we know the test bed is working as expected?</p>
+
+<h2 id="recreating-results">Recreating Results</h2>
+
 <div class="posts">
+
+  <article>
+    
+    <div>
+      <hr/>
+      <h2><a href="https://saahilclaypool.github.io/panaderia/validation/multiple_flows/">Multiple Flow Convergence</a></h2>
+      <p>Given multiple bbr flows competing at the same bottleneck, all of the flows should sync. BBR has a mechanism to
+drain the queue and check for a lowest round trip time after some amount of seconds <em>since the last time the round trip time changed</em>. With multiple flows, they <em>all</em> should see the change in round trip time at the same time, so they should begin to drain the queue at the same time.</p>
+
+<p>The goodput (throughput seen by the receiver) should looks something like this result published by the BBR team:</p>
+
+<p><img src="https://deliveryimages.acm.org/10.1145/3010000/3009824/figs/f8.jpg" alt="Syncing of Multiple Flows" /></p>
+    </div>
+    
+    
+    <div>
+      <a href="https://saahilclaypool.github.io/panaderia/validation/multiple_flows/">Read More…</a>
+    </div>
+    
+  
 
 </div>
     </main>

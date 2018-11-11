@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.51" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Multiple Flow Convergence &middot; The Panaderia</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://saahilclaypool.github.io/panaderia/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="https://saahilclaypool.github.io/panaderia/favicon.ico">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="The Panaderia" />
+
+  
+</head>
+
+  <body class=" ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="https://saahilclaypool.github.io/panaderia/"><h1>The Panaderia</h1></a>
+      <p class="lead">
+       A test bed for tcp congestion control 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li><a href="https://saahilclaypool.github.io/panaderia/">Home</a> </li>
+        <li><a href="https://saahilclaypool.github.io/panaderia/background"> Background </a></li><li><a href="https://saahilclaypool.github.io/panaderia/config"> Configuration </a></li><li><a href="https://saahilclaypool.github.io/panaderia/validation"> Validation </a></li>
+      </ul>
+    </nav>
+
+    <p>Copyright © 2018 Saahil Claypool</p>
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Multiple Flow Convergence</h1>
+  <time datetime=2018-11-10T16:26:54-0500 class="post-date">Sat, Nov 10, 2018</time>
+  <p>Given multiple bbr flows competing at the same bottleneck, all of the flows should sync. BBR has a mechanism to
+drain the queue and check for a lowest round trip time after some amount of seconds <em>since the last time the round trip time changed</em>. With multiple flows, they <em>all</em> should see the change in round trip time at the same time, so they should begin to drain the queue at the same time.</p>
+
+<p>The goodput (throughput seen by the receiver) should looks something like this result published by the BBR team:</p>
+
+<p><img src="https://deliveryimages.acm.org/10.1145/3010000/3009824/figs/f8.jpg" alt="Syncing of Multiple Flows" /></p>
+
+<h2 id="tc-traffic-control">TC: Traffic Control</h2>
+
+<p>This was evaluated using a single 80 megabit per second link with a delay of 10 milliseconds.</p>
+
+<p>The tc (traffic control command line utility) settings for this are as follows:</p>
+
+<pre><code class="language-sh">sudo tc qdisc del dev enp3s0 root
+sudo tc qdisc add dev enp3s0 root handle 1:0 netem delay 10ms
+# In the line below, rate is standard rate. burst is amount of tokens available, limit is the queue
+sudo tc qdisc add dev enp3s0 parent 1:1 handle 10: tbf rate 80mbit buffer 1mbit limit 1000mbit 
+
+tc -s qdisc ls dev enp3s0
+
+# https://netbeez.net/blog/how-to-use-the-linux-traffic-control/
+# https://wiki.linuxfoundation.org/networking/netem
+
+tc -s qdisc ls dev enp3s0
+</code></pre>
+
+<p>This creates a new rule called <strong>dev</strong>, adds a delay of 10ms. Then, we create a token bucket filter (tbf) with for an 80mbit connection speed. The token buffer (amount of tokens available as a burst) is 1mbit, and the limit or queue size of the router is 1000mbit.</p>
+
+<p>These rules are <em>only</em> applied on the packets <em>leaving</em> the enp3s0 interface (outbound to the <code>tarta</code> subnet).</p>
+
+<h2 id="raspberry-pi">Raspberry Pi</h2>
+
+<p>Each client (churro 1 - 4) and server (tarta 1 - 4) is set to use BBR as their congest algorithm. This can be done with the commands:</p>
+
+<pre><code class="language-sh">sudo sysctl net.core.default_qdisc=fq;
+sudo sysctl net.ipv4.tcp_congestion_control={cc};
+sudo sysctl net.ipv4.tcp_congestion_control;
+</code></pre>
+
+<h2 id="iperf3">Iperf3</h2>
+
+<p>We create four iperf3 flows from the <code>churro</code> subnet to the <code>tarta</code> subnet. The bulk sender (the iperf3 client) connects from churro1 to tarta1 for each pair.</p>
+
+<p>Server:</p>
+
+<pre><code class="language-sh">iperf3 -s
+</code></pre>
+
+<p>Client on each churro:</p>
+
+<pre><code class="language-sh">iperf3 -c tarta&lt;n&gt; -t 120
+</code></pre>
+
+<h2 id="results">Results</h2>
+
+<blockquote>
+<p>Note: our raspberry pi testbed is running a slightly newer version of bbr than the one used to generate the graphs in this paper.</p>
+</blockquote>
+
+<p>We notice similar results, except that while most flows sync up, some flows do not. So, we three flows begin to drain the queue, the other flow will take the available buffer space.</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/pana_bbr_compete.png" alt="Panaderia test bed results" /></p>
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

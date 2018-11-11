@@ -101,6 +101,20 @@ Karlsruhe, Germany&lt;/p&gt;
     </item>
     
     <item>
+      <title>Multiple Flow Convergence</title>
+      <link>https://saahilclaypool.github.io/panaderia/validation/multiple_flows/</link>
+      <pubDate>Sat, 10 Nov 2018 16:26:54 -0500</pubDate>
+      
+      <guid>https://saahilclaypool.github.io/panaderia/validation/multiple_flows/</guid>
+      <description>&lt;p&gt;Given multiple bbr flows competing at the same bottleneck, all of the flows should sync. BBR has a mechanism to
+drain the queue and check for a lowest round trip time after some amount of seconds &lt;em&gt;since the last time the round trip time changed&lt;/em&gt;. With multiple flows, they &lt;em&gt;all&lt;/em&gt; should see the change in round trip time at the same time, so they should begin to drain the queue at the same time.&lt;/p&gt;
+
+&lt;p&gt;The goodput (throughput seen by the receiver) should looks something like this result published by the BBR team:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://deliveryimages.acm.org/10.1145/3010000/3009824/figs/f8.jpg&#34; alt=&#34;Syncing of Multiple Flows&#34; /&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>About</title>
       <link>https://saahilclaypool.github.io/panaderia/about/</link>
       <pubDate>Sat, 10 Nov 2018 16:00:22 -0500</pubDate>
