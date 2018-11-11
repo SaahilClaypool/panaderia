@@ -1,0 +1,32 @@
+baseURL = "http://example.org/"
+languageCode = "en-us"
+title = "The Panaderia"
+# theme = "hyde"
+
+[params]
+    description = "A test bed for tcp congestion control"
+
+[menu]
+
+  
+
+  [[menu.main]]
+    identifier = "background"
+    name = "Background"
+    pre = ""
+    url = "/Background"
+    weight = -120
+
+  [[menu.main]]
+    identifier = "config"
+    name = "Configuration"
+    pre = ""
+    url = "/config"
+    weight = -110
+
+  [[menu.main]]
+    identifier = "validation"
+    name = "Validation"
+    pre = ""
+    url = "/validation"
+    weight = -100
