@@ -53,6 +53,30 @@
     <div class="post">
   <h1>Multiple Flow Convergence</h1>
   <time datetime=2018-11-10T16:26:54-0500 class="post-date">Sat, Nov 10, 2018</time>
+  
+  <aside>
+    <header>
+      <h2>Multiple Flow Convergence</h2>
+    </header>
+    <nav id="TableOfContents">
+<ul>
+<li>
+<ul>
+<li><a href="#raspberry-pi">Raspberry Pi</a></li>
+<li><a href="#iperf3">Iperf3</a></li>
+<li><a href="#simulating-a-80mbps-link">Simulating a 80mbps Link</a>
+<ul>
+<li><a href="#tc-traffic-control">TC: Traffic Control</a></li>
+<li><a href="#token-bucket-filters-with-netem-delay">Token bucket filters with netem delay</a></li>
+<li><a href="#netem-with-rate-control">Netem with Rate Control</a></li>
+<li><a href="#tbf-with-peak-rate-limits">TBF with peak rate limits</a></li>
+<li><a href="#cake">Cake</a></li>
+</ul></li>
+</ul></li>
+</ul>
+</nav>
+  </aside>
+  
   <p>Given multiple bbr flows competing at the same bottleneck, all of the flows should sync. BBR has a mechanism to
 drain the queue and check for a lowest round trip time after some amount of seconds <em>since the last time the round trip time changed</em>. With multiple flows, they <em>all</em> should see the change in round trip time at the same time, so they should begin to drain the queue at the same time.</p>
 
