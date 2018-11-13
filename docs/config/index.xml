@@ -19,7 +19,9 @@
       <guid>https://saahilclaypool.github.io/panaderia/config/pi/</guid>
       <description>&lt;p&gt;For our servers and clients, we used 8 raspberry pi 3B+ running a modified Raspbian image. Each of these can be purchased for under $50. As they run Linux, they are able to run all of the different congestion control algorithms (specially, we are interested in BBR).&lt;/p&gt;
 
-&lt;p&gt;We provide information on the steps we took to recompile the Kernel, as well as performance measurements for the Pis.&lt;/p&gt;</description>
+&lt;p&gt;We provide information on the steps we took to recompile the Kernel, as well as performance measurements for the Pis.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -28,7 +30,9 @@
       <pubDate>Sat, 10 Nov 2018 16:45:46 -0500</pubDate>
       
       <guid>https://saahilclaypool.github.io/panaderia/config/router/</guid>
-      <description>&lt;p&gt;The router is an ubuntu desktop with 3 nic cards. One card is used for the normal &amp;lsquo;wide area network&amp;rsquo;, and the other two cards are used to route between the two raspberry pi subnets.&lt;/p&gt;</description>
+      <description>&lt;p&gt;The router is an ubuntu desktop with 3 nic cards. One card is used for the normal &amp;lsquo;wide area network&amp;rsquo;, and the other two cards are used to route between the two raspberry pi subnets.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>

@@ -19,7 +19,9 @@
       <guid>https://saahilclaypool.github.io/panaderia/background/bbr_congestion_based/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;Measuring bottleneck bandwidth and round-trip propagation time&lt;/p&gt;
-&lt;/blockquote&gt;</description>
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -30,7 +32,9 @@
       <guid>https://saahilclaypool.github.io/panaderia/config/pi/</guid>
       <description>&lt;p&gt;For our servers and clients, we used 8 raspberry pi 3B+ running a modified Raspbian image. Each of these can be purchased for under $50. As they run Linux, they are able to run all of the different congestion control algorithms (specially, we are interested in BBR).&lt;/p&gt;
 
-&lt;p&gt;We provide information on the steps we took to recompile the Kernel, as well as performance measurements for the Pis.&lt;/p&gt;</description>
+&lt;p&gt;We provide information on the steps we took to recompile the Kernel, as well as performance measurements for the Pis.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -51,7 +55,9 @@ Karlsruhe, Germany&lt;/p&gt;
 &lt;li&gt;&lt;p&gt;Estimate of bandwidth is available share.&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;Esimate of bandwidth is &lt;em&gt;always&lt;/em&gt; too high.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;</description>
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -62,7 +68,9 @@ Karlsruhe, Germany&lt;/p&gt;
       <guid>https://saahilclaypool.github.io/panaderia/background/bbr_reproducing_in_lossy/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;Luke Hsia and Jervis Muindi&lt;/p&gt;
-&lt;/blockquote&gt;</description>
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -75,7 +83,9 @@ Karlsruhe, Germany&lt;/p&gt;
 &lt;p&gt;Mo Dong et. al. 15&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;A congestion control protocol using a &amp;lsquo;black-box&amp;rsquo; approach to networks. The algorithm relies on utility functions and mini experiments to adjust sending rate.&lt;/p&gt;</description>
+&lt;p&gt;A congestion control protocol using a &amp;lsquo;black-box&amp;rsquo; approach to networks. The algorithm relies on utility functions and mini experiments to adjust sending rate.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -84,7 +94,9 @@ Karlsruhe, Germany&lt;/p&gt;
       <pubDate>Sat, 10 Nov 2018 16:45:46 -0500</pubDate>
       
       <guid>https://saahilclaypool.github.io/panaderia/config/router/</guid>
-      <description>&lt;p&gt;The router is an ubuntu desktop with 3 nic cards. One card is used for the normal &amp;lsquo;wide area network&amp;rsquo;, and the other two cards are used to route between the two raspberry pi subnets.&lt;/p&gt;</description>
+      <description>&lt;p&gt;The router is an ubuntu desktop with 3 nic cards. One card is used for the normal &amp;lsquo;wide area network&amp;rsquo;, and the other two cards are used to route between the two raspberry pi subnets.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -97,7 +109,9 @@ Karlsruhe, Germany&lt;/p&gt;
 &lt;p&gt;Venkat Arun et. al. NSDI 2018&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;Uses a black-box approach to congestion control similar to PCC. This improves on PCC&amp;rsquo;s experiment idea and includes delay in its utility function.&lt;/p&gt;</description>
+&lt;p&gt;Uses a black-box approach to congestion control similar to PCC. This improves on PCC&amp;rsquo;s experiment idea and includes delay in its utility function.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -111,7 +125,9 @@ drain the queue and check for a lowest round trip time after some amount of seco
 
 &lt;p&gt;The goodput (throughput seen by the receiver) should looks something like this result published by the BBR team:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://deliveryimages.acm.org/10.1145/3010000/3009824/figs/f8.jpg&#34; alt=&#34;Syncing of Multiple Flows&#34; /&gt;&lt;/p&gt;</description>
+&lt;p&gt;&lt;img src=&#34;https://deliveryimages.acm.org/10.1145/3010000/3009824/figs/f8.jpg&#34; alt=&#34;Syncing of Multiple Flows&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>

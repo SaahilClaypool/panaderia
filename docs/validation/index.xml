@@ -22,7 +22,9 @@ drain the queue and check for a lowest round trip time after some amount of seco
 
 &lt;p&gt;The goodput (throughput seen by the receiver) should looks something like this result published by the BBR team:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://deliveryimages.acm.org/10.1145/3010000/3009824/figs/f8.jpg&#34; alt=&#34;Syncing of Multiple Flows&#34; /&gt;&lt;/p&gt;</description>
+&lt;p&gt;&lt;img src=&#34;https://deliveryimages.acm.org/10.1145/3010000/3009824/figs/f8.jpg&#34; alt=&#34;Syncing of Multiple Flows&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>
