@@ -12,6 +12,13 @@ The goodput (throughput seen by the receiver) should looks something like this r
 
 ![Syncing of Multiple Flows](https://deliveryimages.acm.org/10.1145/3010000/3009824/figs/f8.jpg)
 
+<hr/>
+
+And our results, which look roughly similar: 
+
+![Our Results](/80m_multi_tbf.png)
+
+See below for the configuration details and analysis
 <!--more-->
 
 ## Raspberry Pi 
@@ -134,3 +141,38 @@ This trial resulted in zero throughput after the bucket was drained. We are stil
 [Cake](https://www.bufferbloat.net/projects/codel/wiki/Cake/) is a more sophisticated queuing discipline for shaping traffic. While the results were initially promising (the graphs looked good), we believed that Cake was doing *too much* to shape the traffic, such as limiting the rate per flow (even with the settings off). 
 
 As this would make the results of our experiments harder to reason about, and thus effectively worthless for validating our test bed, we decided to not pursue cake further. 
+
+## Final Solution: Two Token Buckets
+
+With a single token bucket, there needs to be some accumulation of tokens or the total rate which never reach the desired rate. To quote the man pages: 
+> In general, larger  shaping rates require a larger buffer. For 10mbit/s on Intel, you need at least 10kbyte buffer if you want to reach your configured rate!
+
+The idea behind the peak rate setting is to add a *second* token bucket with a much smaller buffer. This will catch the burst from the token bucket and ensure that the 'burst' from the first token bucket is much smaller. Unfortunately, I was not able to get the *peak rate* setting on the tbf to work correcetly. 
+
+The solution we found was to manually create a second token bucket, shown below: 
+
+> Note: this simulation minimizes drops by setting the limit / queue size to be very large for each queuing discipline
+
+```sh
+sudo tc qdisc del dev enp3s0 root
+
+sudo tc qdisc add dev enp3s0 root handle 1:0 netem delay 10ms limit 1000
+sudo tc qdisc add dev enp3s0 parent 1:1 handle 10: tbf rate 80mbit buffer 1mbit limit 1000mbit 
+# Add a second token bucket with a much smaller buffer / burst size
+sudo tc qdisc add dev enp3s0 parent 10:1 handle 100: tbf rate 80mbit burst .05mbit limit 1000mbit  
+
+tc -s qdisc ls dev enp3s0
+```
+
+This produces *much* smaller bursts in the graph, as shown here: 
+
+> Note: we use four flows at 80 mbps instead of 5 flows at 100 mbps. This is because we have 8 machines, and thus 
+> can only test multiples of four flows with identical conditions.
+
+![small bursts](/80m_multi_tbf.png)
+
+This behavior very closely matches the behavior produced by the google bbr team, albeit with very small bursts after each draining phase. 
+
+With more flows (16) the behavior continues to be quite reasonable. 
+
+![many flows](/80m_16_tbf.png)

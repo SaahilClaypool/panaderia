@@ -3,7 +3,7 @@
 <head>
   <link href="//gmpg.org/xfn/11" rel="profile">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <meta name="generator" content="Hugo 0.40.1" />
+  <meta name="generator" content="Hugo 0.51" />
 
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -72,6 +72,7 @@
 <li><a href="#tbf-with-peak-rate-limits">TBF with peak rate limits</a></li>
 <li><a href="#cake">Cake</a></li>
 </ul></li>
+<li><a href="#final-solution-two-token-buckets">Final Solution: Two Token Buckets</a></li>
 </ul></li>
 </ul>
 </nav>
@@ -84,7 +85,13 @@ drain the queue and check for a lowest round trip time after some amount of seco
 
 <p><img src="https://deliveryimages.acm.org/10.1145/3010000/3009824/figs/f8.jpg" alt="Syncing of Multiple Flows" /></p>
 
-<p></p>
+<hr/>
+
+<p>And our results, which look roughly similar:</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/80m_multi_tbf.png" alt="Our Results" /></p>
+
+<p>See below for the configuration details and analysis</p>
 
 <h2 id="raspberry-pi">Raspberry Pi</h2>
 
@@ -209,6 +216,44 @@ tc -s qdisc ls dev enp3s0
 <p><a href="https://www.bufferbloat.net/projects/codel/wiki/Cake/">Cake</a> is a more sophisticated queuing discipline for shaping traffic. While the results were initially promising (the graphs looked good), we believed that Cake was doing <em>too much</em> to shape the traffic, such as limiting the rate per flow (even with the settings off).</p>
 
 <p>As this would make the results of our experiments harder to reason about, and thus effectively worthless for validating our test bed, we decided to not pursue cake further.</p>
+
+<h2 id="final-solution-two-token-buckets">Final Solution: Two Token Buckets</h2>
+
+<p>With a single token bucket, there needs to be some accumulation of tokens or the total rate which never reach the desired rate. To quote the man pages:
+&gt; In general, larger  shaping rates require a larger buffer. For 10mbit/s on Intel, you need at least 10kbyte buffer if you want to reach your configured rate!</p>
+
+<p>The idea behind the peak rate setting is to add a <em>second</em> token bucket with a much smaller buffer. This will catch the burst from the token bucket and ensure that the &lsquo;burst&rsquo; from the first token bucket is much smaller. Unfortunately, I was not able to get the <em>peak rate</em> setting on the tbf to work correcetly.</p>
+
+<p>The solution we found was to manually create a second token bucket, shown below:</p>
+
+<blockquote>
+<p>Note: this simulation minimizes drops by setting the limit / queue size to be very large for each queuing discipline</p>
+</blockquote>
+
+<pre><code class="language-sh">sudo tc qdisc del dev enp3s0 root
+
+sudo tc qdisc add dev enp3s0 root handle 1:0 netem delay 10ms limit 1000
+sudo tc qdisc add dev enp3s0 parent 1:1 handle 10: tbf rate 80mbit buffer 1mbit limit 1000mbit 
+# Add a second token bucket with a much smaller buffer / burst size
+sudo tc qdisc add dev enp3s0 parent 10:1 handle 100: tbf rate 80mbit burst .05mbit limit 1000mbit  
+
+tc -s qdisc ls dev enp3s0
+</code></pre>
+
+<p>This produces <em>much</em> smaller bursts in the graph, as shown here:</p>
+
+<blockquote>
+<p>Note: we use four flows at 80 mbps instead of 5 flows at 100 mbps. This is because we have 8 machines, and thus
+can only test multiples of four flows with identical conditions.</p>
+</blockquote>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/80m_multi_tbf.png" alt="small bursts" /></p>
+
+<p>This behavior very closely matches the behavior produced by the google bbr team, albeit with very small bursts after each draining phase.</p>
+
+<p>With more flows (16) the behavior continues to be quite reasonable.</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/80m_16_tbf.png" alt="many flows" /></p>
 </div>
 
 

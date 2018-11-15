@@ -24,7 +24,13 @@ drain the queue and check for a lowest round trip time after some amount of seco
 
 &lt;p&gt;&lt;img src=&#34;https://deliveryimages.acm.org/10.1145/3010000/3009824/figs/f8.jpg&#34; alt=&#34;Syncing of Multiple Flows&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;/p&gt;</description>
+&lt;hr/&gt;
+
+&lt;p&gt;And our results, which look roughly similar:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://saahilclaypool.github.io/panaderia/80m_multi_tbf.png&#34; alt=&#34;Our Results&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;See below for the configuration details and analysis&lt;/p&gt;</description>
     </item>
     
   </channel>
