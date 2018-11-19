@@ -8,7 +8,7 @@ toc: "true"
 Given multiple bbr flows competing at the same bottleneck, all of the flows should sync. BBR has a mechanism to 
 drain the queue and check for a lowest round trip time after some amount of seconds *since the last time the round trip time changed*. With multiple flows, they *all* should see the change in round trip time at the same time, so they should begin to drain the queue at the same time. 
 
-The goodput (throughput seen by the receiver) should looks something like this result published by the BBR team: 
+The goodput (throughput seen by the receiver) should looks something like this result published by the BBR team in [this paper](https://cacm.acm.org/magazines/2017/2/212428-bbr-congestion-based-congestion-control/fulltext): 
 
 ![Syncing of Multiple Flows](https://deliveryimages.acm.org/10.1145/3010000/3009824/figs/f8.jpg)
 
