@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.51" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Single flow &middot; The Panaderia</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://saahilclaypool.github.io/panaderia/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="https://saahilclaypool.github.io/panaderia/favicon.ico">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="The Panaderia" />
+
+  
+</head>
+
+  <body class=" ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="https://saahilclaypool.github.io/panaderia/"><h1>The Panaderia</h1></a>
+      <p class="lead">
+       A test bed for tcp congestion control 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li><a href="https://saahilclaypool.github.io/panaderia/">Home</a> </li>
+        <li><a href="https://saahilclaypool.github.io/panaderia/background"> Background </a></li><li><a href="https://saahilclaypool.github.io/panaderia/config"> Configuration </a></li><li><a href="https://saahilclaypool.github.io/panaderia/validation"> Validation </a></li>
+      </ul>
+    </nav>
+
+    <p>Copyright © 2018 Saahil Claypool</p>
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Single flow</h1>
+  <time datetime=2018-11-23T10:01:37-0500 class="post-date">Fri, Nov 23, 2018</time>
+  
+  <aside>
+    <header>
+      <h2>Single flow</h2>
+    </header>
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#bbr-1-0-behavior">BBR 1.0 Behavior</a></li>
+<li><a href="#increasing-bandwidth">Increasing Bandwidth</a>
+<ul>
+<li><a href="#bbr-2-0-behavior">BBR 2.0 Behavior</a></li>
+</ul></li>
+<li><a href="#decreasing-bandwidth">Decreasing Bandwidth</a></li>
+</ul>
+</nav>
+  </aside>
+  
+  <p>A single bbr flow should display a very regular cycle. Every 8 rtt&rsquo;s (round trip times) bbr should probe the bandwidth by increasing its sending rate, drain any queue that is built, and then return to a steady state. Every 10 seconds, the flow should completely drain the queue by throttling its speed, and then return to a normal sending rate.</p>
+
+<h1 id="bbr-1-0-behavior">BBR 1.0 Behavior</h1>
+
+<p>The typical behavior should look like this <sup class="footnote-ref" id="fnref:1"><a href="#fn:1">1</a></sup>:</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/bbr_typical_behavior.jpg" alt="Typical Probe Bandwidth State" /></p>
+
+<p>We aimed to validate our raspberry pi testbed by recreating the experimental conditions defined in an ACM paper<sup class="footnote-ref" id="fnref:2"><a href="#fn:2">2</a></sup> by Neal Cardwell and company. The scenario involves a single flow on a 10mbps link with a round trip time of 40 seconds. BBR&rsquo;s throughput and the amount of inflight data should look like this:</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/google_change_throughput.png" alt="inflight data for changing bandwidth" /></p>
+
+<h1 id="increasing-bandwidth">Increasing Bandwidth</h1>
+
+<p>In our testbed, we were able to generate this graph mirroring these results:</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/single_changing_throughput.png" alt="Our changing latency results" /></p>
+
+<p>The first plot depicts the amount of packets in flight as the bandwidth is increased from 10mbps to 40mbps at the 20 second mark. The steady state just before the 20 second mark does look similar to the typical bbr behavior; each .30 seconds, bbr seems to poll the max bandwidth by increasing its sending rate, and thus the amount of in flight packets. This in turn fills the queues and increases the net round trip time. BBR then drains the queues by decreasing the round trip time until the rtt returns to the previous level.</p>
+
+<p>But, at second 20 when the 10mbps link is lifted to a 40mbps link, the behavior deviates from the behavior previously described. Rather than increasing the inflight packets through a series of probe and drain cycles, the amount of inflight packets seems to exponentially increase until the queues begin to fill again. At first we considered this an oddity from our test bed (as token bucket filters are fiddly beasts), but after reading the slides <a href="https://datatracker.ietf.org/meeting/102/materials/slides-102-iccrg-an-update-on-bbr-work-at-google-00">here</a>, it seems that this is a change in how BBR functions.</p>
+
+<h2 id="bbr-2-0-behavior">BBR 2.0 Behavior</h2>
+
+<p>As discussed in the slides from the IETF 102, the BBR team is changing the &lsquo;probe&rsquo; phase of the bbr cycle. Rather than increasing the &lsquo;gain&rsquo; value at each cycle, the new behavior is to exponentially increase the inflight packets until the amount of in flight packets is too high (indicated by larger queue sizes, and thus fewer acked packets). This behavior is depicted in this rendered graph from that slide deck:</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/bbr2.0_ramp_up.png" alt="BBR 2.0 Ramp Up Behavior" /></p>
+
+<p>Because we are running a slightly modified Linux Kernel 4.19, we have a newer version of BBR than the previously mentioned behavior evaluates. It would seems that the behavior we see is much closer to BBR 2.0.</p>
+
+<h1 id="decreasing-bandwidth">Decreasing Bandwidth</h1>
+
+<p>At 40 seconds, the bandwidth in our experiment is decreased from 40mbps to 20 mbps. The expected BBR 1.0 RTT and inflight packets are shown in the second second of &lsquo;figure 3&rsquo; that is linked above. Until BBR hits the limit of inflight packets (determined by the cwnd_gain), the sender will continue to send packets at a rate faster than the bottleneck can handle. This will increase the inflight packets and the round trip times as the router queues begin to fill. After hitting this limit, BBR will decrease the sending rate and cycle down to return to the optimal RTT (at relatively empty queues).</p>
+
+<p>Our single measured bbr flow looks like this:</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/decrease_throughput.png" alt="Decreasing Bandwidth" /></p>
+
+<p>This <em>very</em> closely mirrors the bbr 1.0 and 2.0 behaviors and reaffirms that our setup is likely working as intended.</p>
+<div class="footnotes">
+
+<hr />
+
+<ol>
+<li id="fn:1"><a href="https://cacm.acm.org/magazines/2017/2/212428-bbr-congestion-based-congestion-control/fulltext">BBR: Congestion-Based Congestion Control</a>
+ <a class="footnote-return" href="#fnref:1"><sup>[return]</sup></a></li>
+<li id="fn:2"><a href="https://queue.acm.org/detail.cfm?id=3022184">BBR: Congestion-Based Congestion Control Measuring bottleneck bandwidth and round-trip propagation time</a>
+ <a class="footnote-return" href="#fnref:2"><sup>[return]</sup></a></li>
+</ol>
+</div>
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>
