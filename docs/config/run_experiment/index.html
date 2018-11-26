@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.51" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Running an Experiment &middot; The Panaderia</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://saahilclaypool.github.io/panaderia/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="https://saahilclaypool.github.io/panaderia/favicon.ico">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="The Panaderia" />
+
+  
+</head>
+
+  <body class=" ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="https://saahilclaypool.github.io/panaderia/"><h1>The Panaderia</h1></a>
+      <p class="lead">
+       A test bed for tcp congestion control 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li><a href="https://saahilclaypool.github.io/panaderia/">Home</a> </li>
+        <li><a href="https://saahilclaypool.github.io/panaderia/background"> Background </a></li><li><a href="https://saahilclaypool.github.io/panaderia/config"> Configuration </a></li><li><a href="https://saahilclaypool.github.io/panaderia/validation"> Validation </a></li>
+      </ul>
+    </nav>
+
+    <p>Copyright © 2018 Saahil Claypool</p>
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Running an Experiment</h1>
+  <time datetime=2018-11-25T00:00:00Z class="post-date">Sun, Nov 25, 2018</time>
+  
+  <p>A typical experiment involves setting the congestion control protocols for each raspberry pi, setting the bandwidth and latency parameters for the router, and running a packet capture on each sender and client to monitor the flow.</p>
+
+<h1 id="python-orchestration">Python Orchestration</h1>
+
+<p>I created a python script that uses a json configuration to set up each raspberry pi. The script can be seen <a href="https://github.com/SaahilClaypool/rpi/blob/master/Config/Validation/start_trial.py">here</a>.</p>
+
+<p>This script reads a json configuration file, and executes the bash scripts associated with each section. Lines ending with an <code>&amp;</code> are treated run in the background by spawning a thread. Each of these threads must be joined before moving on to the next section (except in the setup phase). The substring {T} is replaced with the time for each trial.</p>
+
+<p>Each command is run on the given host using &lsquo;ssh&rsquo;. This requires ssh keys to be set up for each host.</p>
+
+<p><details><summary>sample_config.json (click to show)</summary></p>
+
+<pre><code class="language-json">{
+    &quot;name&quot;: &quot;80m_bbr_tbf&quot;,
+    &quot;time&quot;: 60,
+    &quot;setup&quot;: {
+        &quot;local&quot;: {
+            &quot;cc&quot;: &quot;bbr&quot;,
+            &quot;commands&quot;: [
+                &quot;sudo sh Configs/80m_tbf.sh&quot;
+            ]
+        },
+        &quot;pi@churro1&quot;: {
+            &quot;cc&quot;: &quot;bbr&quot;,
+            &quot;commands&quot;: [
+                &quot;sudo tcpdump 'tcp port 5201' -w pcap.pcap -s 96 &amp;&quot;
+            ]
+        },
+        &quot;pi@churro2&quot;: {
+            &quot;cc&quot;: &quot;bbr&quot;,
+            &quot;commands&quot;: [
+                &quot;sudo tcpdump 'tcp port 5201' -w pcap.pcap -s 96 &amp;&quot;
+            ]
+        },
+        &quot;pi@churro3&quot;: {
+            &quot;cc&quot;: &quot;bbr&quot;,
+            &quot;commands&quot;: [
+                &quot;sudo tcpdump 'tcp port 5201' -w pcap.pcap -s 96 &amp;&quot;
+            ]
+        },
+        &quot;pi@churro4&quot;: {
+            &quot;cc&quot;: &quot;bbr&quot;,
+            &quot;commands&quot;: [
+                &quot;sudo tcpdump 'tcp port 5201' -w pcap.pcap -s 96 &amp;&quot;
+            ]
+        },
+        &quot;pi@tarta1&quot;: {
+            &quot;cc&quot;: &quot;bbr&quot;,
+            &quot;commands&quot;: [
+                &quot;iperf3 -s &amp;&quot;,
+                &quot;sudo tcpdump 'tcp port 5201' -w pcap.pcap -s 96 &amp;&quot;
+            ]
+        },
+        &quot;pi@tarta2&quot;: {
+            &quot;cc&quot;: &quot;bbr&quot;,
+            &quot;commands&quot;: [
+                &quot;iperf3 -s &amp;&quot;,
+                &quot;sudo tcpdump 'tcp port 5201' -w pcap.pcap -s 96 &amp;&quot;
+            ]
+        },
+        &quot;pi@tarta3&quot;: {
+            &quot;cc&quot;: &quot;bbr&quot;,
+            &quot;commands&quot;: [
+                &quot;iperf3 -s &amp;&quot;,
+                &quot;sudo tcpdump 'tcp port 5201' -w pcap.pcap -s 96 &amp;&quot;
+            ]
+        },
+        &quot;pi@tarta4&quot;: {
+            &quot;cc&quot;: &quot;bbr&quot;,
+            &quot;commands&quot;: [
+                &quot;iperf3 -s &amp;&quot;,
+                &quot;sudo tcpdump 'tcp port 5201' -w pcap.pcap -s 96 &amp;&quot;
+            ]
+        }
+    },
+    &quot;run&quot;: {
+        &quot;local&quot;: {
+            &quot;commands&quot;: [
+            ]
+        },
+
+        &quot;pi@churro1&quot;: {
+            &quot;commands&quot;: [
+                &quot;iperf3 -c tarta1 -t {T} &amp;&quot;
+            ]
+        },
+        &quot;pi@churro2&quot;: {
+            &quot;commands&quot;: [
+                &quot;sleep 2; iperf3 -c tarta2 -t {T} &amp;&quot;
+            ]
+        },
+        &quot;pi@churro3&quot;: {
+            &quot;commands&quot;: [
+                &quot;sleep 4; iperf3 -c tarta3 -t {T} &amp;&quot;
+            ]
+        },
+        &quot;pi@churro4&quot;: {
+            &quot;commands&quot;: [
+                &quot;sleep 6; iperf3 -c tarta4 -t {T} &amp;&quot;
+            ]
+        },
+        &quot;pi@tarta1&quot;: {
+            &quot;commands&quot;: [
+            ]
+        },
+        &quot;pi@tarta2&quot;: {
+            &quot;commands&quot;: [
+            ]
+        },
+        &quot;pi@tarta3&quot;: {
+            &quot;commands&quot;: [
+            ]
+        },
+        &quot;pi@tarta4&quot;: {
+            &quot;commands&quot;: [
+            ]
+        }
+    }, 
+    &quot;finish&quot;: {
+        &quot;local&quot;: {
+            &quot;commands&quot;: [
+                &quot;sudo sh 10mbps_enp3_off.sh&quot;,
+                &quot;sudo tc -s qdisc ls dev enp3s0&quot;
+            ]
+        },
+        &quot;pi@churro1&quot;: {
+            &quot;commands&quot;: [
+                &quot;sudo killall iperf3&quot;,
+                &quot;sudo killall tcpdump&quot;
+            ]
+        },
+        &quot;pi@churro2&quot;: {
+            &quot;commands&quot;: [
+                &quot;sudo killall iperf3&quot;,
+                &quot;sudo killall tcpdump&quot;
+            ]
+        },
+        &quot;pi@churro3&quot;: {
+            &quot;commands&quot;: [
+                &quot;sudo killall iperf3&quot;,
+                &quot;sudo killall tcpdump&quot;
+            ]
+        },
+        &quot;pi@churro4&quot;: {
+            &quot;commands&quot;: [
+                &quot;sudo killall iperf3&quot;,
+                &quot;sudo killall tcpdump&quot;
+            ]
+        },
+        &quot;pi@tarta1&quot;: {
+            &quot;commands&quot;: [
+                &quot;sudo killall iperf3&quot;,
+                &quot;sudo killall tcpdump&quot;
+            ]
+        },
+        &quot;pi@tarta2&quot;: {
+            &quot;commands&quot;: [
+                &quot;sudo killall iperf3&quot;,
+                &quot;sudo killall tcpdump&quot;
+            ]
+        },
+        &quot;pi@tarta3&quot;: {
+            &quot;commands&quot;: [
+                &quot;sudo killall iperf3&quot;,
+                &quot;sudo killall tcpdump&quot;
+            ]
+        },
+        &quot;pi@tarta4&quot;: {
+            &quot;commands&quot;: [
+                &quot;sudo killall iperf3&quot;,
+                &quot;sudo killall tcpdump&quot;
+            ]
+        }
+    }
+}
+</code></pre>
+
+<p></details></p>
+
+<p><details><summary>start_trial.py (click to show)</summary></p>
+
+<pre><code class="language-py">#! /usr/bin/python3
+import os
+import time
+import sys
+import json
+import threading
+from typing import Dict
+
+if (not (len(sys.argv) == 2 or len(sys.argv) == 3)):
+    print(f&quot;error: enter one or two args, you enetered {len(sys.argv)} args&quot;)
+    exit()
+
+
+def c(host, cmd):
+    &quot;&quot;&quot;
+    turn into remote version of command
+    &quot;&quot;&quot;
+    cmd = cmd.replace(&quot;&amp;&quot;, &quot;&quot;)
+    cmd = cmd.replace(&quot;{T}&quot;, f&quot;{trial_time}&quot;)
+    if (host != 'local'):
+        cmd_clean = f&quot;ssh {host} &quot;
+        cmd_clean += &quot;\&quot;&quot; + cmd + &quot;\&quot;&quot;
+        return cmd_clean
+    return cmd
+
+
+def exec_cmd(host, cmd):
+    new_thread = &quot;&amp;&quot; in cmd
+    cmd = c(host, cmd)
+    print(&quot;command: &quot;, cmd)
+    if (new_thread):
+        t = threading.Thread(target=lambda : os.system(cmd))
+        t.name = f&quot;{host} $ {cmd}&quot;
+        t.start()
+        return t
+    else:
+        os.system(cmd)
+        return False
+
+
+def set_cc(host, cc):
+    cmd = \
+f&quot;&quot;&quot;\
+sudo sysctl net.core.default_qdisc=fq;
+sudo sysctl net.ipv4.tcp_congestion_control={cc};
+sudo sysctl net.ipv4.tcp_congestion_control;
+&quot;&quot;&quot;
+    cmd = c(host, cmd);
+    print(cmd)
+    os.system(cmd)
+    pass
+
+config: Dict = json.loads(open(sys.argv[1], 'r').read())
+name = config[&quot;name&quot;]
+trial_time = config[&quot;time&quot;]
+if (len(sys.argv) &gt; 2):
+    name = sys.argv[2]
+print(config)
+
+for host, conf in config[&quot;setup&quot;].items():
+    print(f&quot;Configuring: {host}\n&quot;)
+    set_cc(host, conf[&quot;cc&quot;])
+    for command in conf[&quot;commands&quot;]:
+        exec_cmd(host, command)
+
+# Sleep to allow threads to start process up etc.
+time.sleep(3)
+
+run_handles = []
+for host, conf in config[&quot;run&quot;].items():
+    print(f&quot;Running : {host}\n&quot;)
+    for command in conf[&quot;commands&quot;]:
+        join_handle = exec_cmd(host, command)
+        run_handles.append(join_handle)
+# Block and wait for all tasks started in the run phase
+for handle in run_handles:
+    handle.join()
+
+for host, conf in config[&quot;finish&quot;].items():
+    print(f&quot;Running : {host}\n&quot;)
+    for command in conf[&quot;commands&quot;]:
+        exec_cmd(host, command)
+
+# mkdir if it doesn't exist in results
+if (not os.path.isdir(f&quot;Results/{name}/&quot;)):
+    os.mkdir(f&quot;Results/{name}/&quot;)
+
+for host, conf in config[&quot;run&quot;].items():
+    cc = config[&quot;setup&quot;][host][&quot;cc&quot;]
+    cmd = f&quot;scp {host}:~/pcap.pcap Results/{name}/{cc}_{host}.pcap&quot;
+    print(&quot;running: &quot;, cmd)
+    os.system(cmd)
+
+os.system(&quot;sh ./10mbps_enp3_off.sh&quot;)
+</code></pre>
+
+<p></details></p>
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

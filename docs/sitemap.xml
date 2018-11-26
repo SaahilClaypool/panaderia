@@ -38,6 +38,21 @@
   </url>
   
   <url>
+    <loc>https://saahilclaypool.github.io/panaderia/config/congestion_control/</loc>
+    <lastmod>2018-11-25T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://saahilclaypool.github.io/panaderia/config/run_experiment/</loc>
+    <lastmod>2018-11-25T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://saahilclaypool.github.io/panaderia/config/parse_pcap/</loc>
+    <lastmod>2018-11-24T16:44:20-05:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://saahilclaypool.github.io/panaderia/validation/single_flow/</loc>
     <lastmod>2018-11-23T10:01:37-05:00</lastmod>
   </url>

@@ -28,7 +28,43 @@
       <pubDate>Sat, 10 Nov 2018 16:45:46 -0500</pubDate>
       
       <guid>https://saahilclaypool.github.io/panaderia/config/router/</guid>
-      <description>&lt;p&gt;The router is an ubuntu desktop with 3 nic cards. One card is used for the normal &amp;lsquo;wide area network&amp;rsquo;, and the other two cards are used to route between the two raspberry pi subnets.&lt;/p&gt;</description>
+      <description>&lt;p&gt;The router is an ubuntu desktop with 3 nic cards. One card is used for the normal &amp;lsquo;wide area network&amp;rsquo;, and the other two cards are used to route between the two raspberry pi subnets. This is done using netplan on ubuntu, and editing the dhcpd.conf to set up static ip addresses. Also, the host files for each machine are edited to make tests more convenient.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Adding congestion control protocols</title>
+      <link>https://saahilclaypool.github.io/panaderia/config/congestion_control/</link>
+      <pubDate>Sun, 25 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://saahilclaypool.github.io/panaderia/config/congestion_control/</guid>
+      <description>&lt;p&gt;The linux kernel comes with a number of different congestion control algorithms. To test new congestion control methods we to be able to:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Dynamically select new protocols&lt;/li&gt;
+&lt;li&gt;Recompile and install new protocols&lt;/li&gt;
+&lt;/ol&gt;</description>
+    </item>
+    
+    <item>
+      <title>Running an Experiment</title>
+      <link>https://saahilclaypool.github.io/panaderia/config/run_experiment/</link>
+      <pubDate>Sun, 25 Nov 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://saahilclaypool.github.io/panaderia/config/run_experiment/</guid>
+      <description>&lt;p&gt;A typical experiment involves setting the congestion control protocols for each raspberry pi, setting the bandwidth and latency parameters for the router, and running a packet capture on each sender and client to monitor the flow.&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Parsing and Plotting Captures</title>
+      <link>https://saahilclaypool.github.io/panaderia/config/parse_pcap/</link>
+      <pubDate>Sat, 24 Nov 2018 16:44:20 -0500</pubDate>
+      
+      <guid>https://saahilclaypool.github.io/panaderia/config/parse_pcap/</guid>
+      <description>&lt;p&gt;The &lt;code&gt;start_trial&lt;/code&gt; script described &lt;a href=&#34;https://saahilclaypool.github.io/panaderia/config/run_experiment&#34;&gt;here&lt;/a&gt; copies 8 packet capture (pcap) files to a local &amp;lsquo;Results&amp;rsquo; directory. This page describes the tools used to parse these captures and create plots of the goodput (throughput seen by the receiver), the round trip times (for the sender) and the packets in flight (for the sender).&lt;/p&gt;
+
+&lt;p&gt;The goal is to parse each experiment, the 8 pcap files, into 8 csv files, and then to create plot like this:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://saahilclaypool.github.io/panaderia/80m_multi_tbf.png&#34; alt=&#34;plot&#34; /&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>

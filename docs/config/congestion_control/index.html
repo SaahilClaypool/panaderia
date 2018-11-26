@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.51" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Adding congestion control protocols &middot; The Panaderia</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://saahilclaypool.github.io/panaderia/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="https://saahilclaypool.github.io/panaderia/favicon.ico">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="The Panaderia" />
+
+  
+</head>
+
+  <body class=" ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="https://saahilclaypool.github.io/panaderia/"><h1>The Panaderia</h1></a>
+      <p class="lead">
+       A test bed for tcp congestion control 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li><a href="https://saahilclaypool.github.io/panaderia/">Home</a> </li>
+        <li><a href="https://saahilclaypool.github.io/panaderia/background"> Background </a></li><li><a href="https://saahilclaypool.github.io/panaderia/config"> Configuration </a></li><li><a href="https://saahilclaypool.github.io/panaderia/validation"> Validation </a></li>
+      </ul>
+    </nav>
+
+    <p>Copyright © 2018 Saahil Claypool</p>
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Adding congestion control protocols</h1>
+  <time datetime=2018-11-25T00:00:00Z class="post-date">Sun, Nov 25, 2018</time>
+  
+  <aside>
+    
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#selecting-an-protocol">Selecting an protocol</a></li>
+<li><a href="#adding-or-modifying-source-code-additions">Adding or Modifying Source code additions</a></li>
+<li><a href="#installing-a-kernel-module">Installing a kernel module</a></li>
+<li><a href="#user-space-congestion-control">User space congestion control</a></li>
+</ul>
+</nav>
+  </aside>
+  
+  <p>The linux kernel comes with a number of different congestion control algorithms. To test new congestion control methods we to be able to:</p>
+
+<ol>
+<li>Dynamically select new protocols</li>
+<li>Recompile and install new protocols</li>
+</ol>
+
+<h1 id="selecting-an-protocol">Selecting an protocol</h1>
+
+<p>For any protocol that has already been installed as a kernel module, it should be possible to set that protocol as the current default using the following:</p>
+
+<pre><code class="language-sh">sudo net.ipv4.tcp_congestion_control=cubic
+sudo sysctl -p
+sudo sysctl net.ipv4.tcp_congestion_control # check the active protocol
+</code></pre>
+
+<h1 id="adding-or-modifying-source-code-additions">Adding or Modifying Source code additions</h1>
+
+<p>The goal here is to A) create new protcols or B) install multiple versions of the same protocols with different names. This will allow user to switch between protocols without rebooting the client machines.</p>
+
+<p>The general process is as follows:</p>
+
+<ol>
+<li><p>Add or modify a new file int <code>/net/ipv4/</code> for the congestion control protocol</p>
+
+<p>This file should contain the main code for the congestion control protocol.</p>
+
+<p>The important parts are defined in the <code>struct tcp_congestion_ops</code>. This is defined in <code>include/net/tcp.h</code>. This specifies the init function and the main function and event handlers for this protocols.</p></li>
+
+<li><p>Create an &lsquo;info&rsquo; struct to hold the state in <code>include/uapi/linux/inet_diag.h</code></p>
+
+<p>This must be added to the <code>union tcp_cc_info</code> in <code>include/uapi/linux/inet_diag.h</code>.</p>
+
+<p>note: if you are modifying the bbr stack, you can probably just reuse the existing bbr struct</p></li>
+
+<li><p>Modify the <code>net/ipv4/Kconfig</code></p>
+
+<p>I <em>believe</em> this is used to to specify which modules should be built into the image. So, this is force the new modules you create to be compiled.</p></li>
+
+<li><p>Add the .o file to <code>net/ipv4/Makefile</code></p>
+
+<p>the line should look like: <code>obj-$(CONFIG_TCP_CONG_BBR2) += tcp_bbr2.o</code></p></li>
+</ol>
+
+<blockquote>
+<p>As kernel version changes, the old bbr code has to be modified to work with the newer kernel api. So, running multiple different versions of BBR in the same kernel is difficult.</p>
+</blockquote>
+
+<h1 id="installing-a-kernel-module">Installing a kernel module</h1>
+
+<blockquote>
+<p>Note: it should be possible to <em>just</em> install the kernel module for the new congestion control protocol</p>
+</blockquote>
+
+<h1 id="user-space-congestion-control">User space congestion control</h1>
+
+<p>This <a href="https://akshayn.xyz/res/ccp-sigcomm18.pdf">SIGCOMM Paper</a> published by Akshay Narayan et. al. at MIT discusses using a user space agent to implement congestion control protocols. This has interesting implications on the development of these protocols.</p>
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

@@ -106,12 +106,66 @@ churro1--+
     <div>
       <hr/>
       <h2><a href="https://saahilclaypool.github.io/panaderia/config/router/">The Router</a></h2>
-      <p>The router is an ubuntu desktop with 3 nic cards. One card is used for the normal &lsquo;wide area network&rsquo;, and the other two cards are used to route between the two raspberry pi subnets.</p>
+      <p>The router is an ubuntu desktop with 3 nic cards. One card is used for the normal &lsquo;wide area network&rsquo;, and the other two cards are used to route between the two raspberry pi subnets. This is done using netplan on ubuntu, and editing the dhcpd.conf to set up static ip addresses. Also, the host files for each machine are edited to make tests more convenient.</p>
     </div>
     
     
     <div>
       <a href="https://saahilclaypool.github.io/panaderia/config/router/">Read More…</a>
+    </div>
+    
+  
+
+  <article>
+    
+    <div>
+      <hr/>
+      <h2><a href="https://saahilclaypool.github.io/panaderia/config/congestion_control/">Adding congestion control protocols</a></h2>
+      <p>The linux kernel comes with a number of different congestion control algorithms. To test new congestion control methods we to be able to:</p>
+
+<ol>
+<li>Dynamically select new protocols</li>
+<li>Recompile and install new protocols</li>
+</ol>
+    </div>
+    
+    
+    <div>
+      <a href="https://saahilclaypool.github.io/panaderia/config/congestion_control/">Read More…</a>
+    </div>
+    
+  
+
+  <article>
+    
+    <div>
+      <hr/>
+      <h2><a href="https://saahilclaypool.github.io/panaderia/config/run_experiment/">Running an Experiment</a></h2>
+      <p>A typical experiment involves setting the congestion control protocols for each raspberry pi, setting the bandwidth and latency parameters for the router, and running a packet capture on each sender and client to monitor the flow.</p>
+    </div>
+    
+    
+    <div>
+      <a href="https://saahilclaypool.github.io/panaderia/config/run_experiment/">Read More…</a>
+    </div>
+    
+  
+
+  <article>
+    
+    <div>
+      <hr/>
+      <h2><a href="https://saahilclaypool.github.io/panaderia/config/parse_pcap/">Parsing and Plotting Captures</a></h2>
+      <p>The <code>start_trial</code> script described <a href="https://saahilclaypool.github.io/panaderia/config/run_experiment">here</a> copies 8 packet capture (pcap) files to a local &lsquo;Results&rsquo; directory. This page describes the tools used to parse these captures and create plots of the goodput (throughput seen by the receiver), the round trip times (for the sender) and the packets in flight (for the sender).</p>
+
+<p>The goal is to parse each experiment, the 8 pcap files, into 8 csv files, and then to create plot like this:</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/80m_multi_tbf.png" alt="plot" /></p>
+    </div>
+    
+    
+    <div>
+      <a href="https://saahilclaypool.github.io/panaderia/config/parse_pcap/">Read More…</a>
     </div>
     
   

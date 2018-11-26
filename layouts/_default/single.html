@@ -4,9 +4,9 @@
   <time datetime={{ .Date.Format "2006-01-02T15:04:05Z0700" }} class="post-date">{{ .Date.Format "Mon, Jan 2, 2006" }}</time>
   {{ if (eq .Params.toc "true") }}
   <aside>
-    <header>
+    <!-- <header>
       <h2>{{.Title}}</h2>
-    </header>
+    </header> -->
     {{.TableOfContents}}
   </aside>
   {{ end }}

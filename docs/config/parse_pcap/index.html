@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.51" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Parsing and Plotting Captures &middot; The Panaderia</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://saahilclaypool.github.io/panaderia/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="https://saahilclaypool.github.io/panaderia/favicon.ico">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="The Panaderia" />
+
+  
+</head>
+
+  <body class=" ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="https://saahilclaypool.github.io/panaderia/"><h1>The Panaderia</h1></a>
+      <p class="lead">
+       A test bed for tcp congestion control 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li><a href="https://saahilclaypool.github.io/panaderia/">Home</a> </li>
+        <li><a href="https://saahilclaypool.github.io/panaderia/background"> Background </a></li><li><a href="https://saahilclaypool.github.io/panaderia/config"> Configuration </a></li><li><a href="https://saahilclaypool.github.io/panaderia/validation"> Validation </a></li>
+      </ul>
+    </nav>
+
+    <p>Copyright © 2018 Saahil Claypool</p>
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Parsing and Plotting Captures</h1>
+  <time datetime=2018-11-24T16:44:20-0500 class="post-date">Sat, Nov 24, 2018</time>
+  
+  <p>The <code>start_trial</code> script described <a href="https://saahilclaypool.github.io/panaderia/config/run_experiment">here</a> copies 8 packet capture (pcap) files to a local &lsquo;Results&rsquo; directory. This page describes the tools used to parse these captures and create plots of the goodput (throughput seen by the receiver), the round trip times (for the sender) and the packets in flight (for the sender).</p>
+
+<p>The goal is to parse each experiment, the 8 pcap files, into 8 csv files, and then to create plot like this:</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/80m_multi_tbf.png" alt="plot" /></p>
+
+<h1 id="parsing">Parsing</h1>
+
+<p>To do this, each flow identified by the (src port, src ip, dest port, dest ip) tuple, must parsed into a csv file containing the throughput, round trip time, and packets in flight as seen by each raspberry pi at some granularity (usually half a second).</p>
+
+<p>This parsing is done using a <code>rust</code> program developed <a href="https://github.com/SaahilClaypool/NetworkTools/tree/master/Parse_pcap">here</a>. This program parses each of the captures matching a given regex pattern and for each program, creates a csv file for each flow identified. This csv file with contain each of the <em>Parser Entries</em> defined in <code>parse_pcap.rs</code>. Currently, this includes the rtt, throughput, and packets in flight.</p>
+
+<p>The round trip time for each half second is calculated by dividing the time for each of the packets ack&rsquo;d in that window by the number of packets ack&rsquo;d. If there are no packets ack&rsquo;d in a given half second window, the round trip time is whatever the previous time was + the granularity of the window (half a second).</p>
+
+<p>The throughput it calculated as the number of packets sent in each half second window.</p>
+
+<p>The packets in flight is the number of bytes un-acked at the end of each window.</p>
+
+<p>The output is a csv file for each flow, which may look something like this:
+(note: the granularity for this csv is 10 milliseconds, not 500)</p>
+
+<pre><code class="language-csv">time,throughput,inflight,rtt
+59437,19200000,94120,40
+59447,19200000,92672,40
+59457,24000000,101360,40
+59467,24000000,105704,40
+59477,25200000,112944,40
+59487,24000000,118736,40
+59497,25200000,121632,40
+</code></pre>
+
+<h1 id="plotting">Plotting</h1>
+
+<p>Once the data is parsed into csvs, it can easily be plotted using python. The script we use to create the plot show above is <a href="https://github.com/SaahilClaypool/NetworkTools/blob/master/Parse_pcap/plot.py">here</a></p>
+
+<p>The round trip time and packets in flight are calculated from the &ldquo;senders&rsquo;&rdquo; point of view, whereas the throughput (or goodput) is calculated from the &ldquo;receivers&rdquo;&rsquo; point of view.</p>
+
+<h1 id="summary">Summary</h1>
+
+<p>Given the captures for each raspberry pi are stored in a directory, the command below can be used to generate the plots.</p>
+
+<pre><code class="language-sh">rm *.csv; RUST_BACKTRACE=1 cargo run '*' ~/temp/
+python3 plot.py . . new.png show
+</code></pre>
+
+<pre><code class="language-sh">rm *.csv; cargo run &lt;file_regex_pattern&gt; &lt;directory&gt;
+python plot.py &lt;input directory&gt; &lt;substring to match&gt; &lt;output_name&gt; &lt;show&gt;
+</code></pre>
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>
