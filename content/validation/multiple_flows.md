@@ -16,7 +16,7 @@ The goodput (throughput seen by the receiver) should looks something like this r
 
 And our results, which look roughly similar: 
 
-![Our Results](/80m_multi_tbf.png)
+![Our Results](/results/4_throughput.svg)
 
 See below for the configuration details and analysis
 <!--more-->
@@ -175,4 +175,4 @@ This behavior very closely matches the behavior produced by the google bbr team,
 
 With more flows (16) the behavior continues to be quite reasonable. 
 
-![many flows](/80m_16_tbf.png)
+![many flows](/results/16_throughput.svg)

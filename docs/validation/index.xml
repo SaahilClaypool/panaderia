@@ -17,7 +17,9 @@
       <pubDate>Fri, 23 Nov 2018 10:01:37 -0500</pubDate>
       
       <guid>https://saahilclaypool.github.io/panaderia/validation/single_flow/</guid>
-      <description>&lt;p&gt;A single bbr flow should display a very regular cycle. Every 8 rtt&amp;rsquo;s (round trip times) bbr should probe the bandwidth by increasing its sending rate, drain any queue that is built, and then return to a steady state. Every 10 seconds, the flow should completely drain the queue by throttling its speed, and then return to a normal sending rate.&lt;/p&gt;</description>
+      <description>&lt;p&gt;A single bbr flow should display a very regular cycle. Every 8 rtt&amp;rsquo;s (round trip times) bbr should probe the bandwidth by increasing its sending rate, drain any queue that is built, and then return to a steady state. Every 10 seconds, the flow should completely drain the queue by throttling its speed, and then return to a normal sending rate.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -37,9 +39,10 @@ drain the queue and check for a lowest round trip time after some amount of seco
 
 &lt;p&gt;And our results, which look roughly similar:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://saahilclaypool.github.io/panaderia/80m_multi_tbf.png&#34; alt=&#34;Our Results&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://saahilclaypool.github.io/panaderia/results/4_throughput.svg&#34; alt=&#34;Our Results&#34; /&gt;&lt;/p&gt;
 
-&lt;p&gt;See below for the configuration details and analysis&lt;/p&gt;</description>
+&lt;p&gt;See below for the configuration details and analysis
+&lt;/p&gt;</description>
     </item>
     
   </channel>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>Copa: Practical Delay-Based Congestion Control for the Internet &middot; The Panaderia</title>
+  <title>Improving the Experiment setup &middot; The Panaderia</title>
 
   
   <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/print.css" media="print">
@@ -51,16 +51,36 @@
 
     <main class="content container">
     <div class="post">
-  <h1>Copa: Practical Delay-Based Congestion Control for the Internet</h1>
-  <time datetime=2018-11-11T12:16:04-0500 class="post-date">Sun, Nov 11, 2018</time>
+  <h1>Improving the Experiment setup</h1>
+  <time datetime=2018-12-13T00:00:00Z class="post-date">Thu, Dec 13, 2018</time>
   
-  <blockquote>
-<p>Venkat Arun et. al. NSDI 2018</p>
-</blockquote>
+  <p>Being able to quickly run <em>and rerun</em> experiments is vital in ensuring that the tweaks we make to our testbed are having the effects that we expect. Specifically, we needed to be able to:</p>
 
-<p>Uses a black-box approach to congestion control similar to PCC. This improves on PCC&rsquo;s experiment idea and includes delay in its utility function.</p>
+<ol>
+<li><p>Setup the router with the correct parameters</p>
+
+<p>Increasing or decreasing the bandwidth, latency, buffer size etc.</p></li>
+
+<li><p>Orchestrate the raspberry pi startup</p>
+
+<p>This involves starting up <code>N</code> flows per raspberry pi, and measuring their performance over the course of the experiment session.</p>
+
+<p>And, for each raspberry pi, needed to start a packet capture to analyze the results post experiment.</p></li>
+
+<li><p>Poll the router as the experiment progresses</p>
+
+<p>This allows us to see the &lsquo;ground truth&rsquo; for how many packets are in flight or dropped. (Currently, we only keep track of the router queue size).</p></li>
+
+<li><p>Pull in all of the captures to the &lsquo;router&rsquo;</p></li>
+
+<li><p>Parse the captures into CSV files and create consistent plots</p></li>
+</ol>
+
+<p>By wrapping all of these procedures in a single script, we are able to quickly change configurations and create plots in an <em>identical</em> manner. The reproducibility of this setup is key in allowing us to compare results across different configurations in a consistent manner.</p>
 
 <p></p>
+
+<p>Our experiment</p>
 </div>
 
 

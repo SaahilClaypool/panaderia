@@ -9,7 +9,6 @@ The test bed is comprised of 8 raspberry pi B+ computers, two switches and an ub
 
 For convenience, the host names for the 192.168.1.0/24 subnet are 'tarta1' through 'tarta4' and the other subnet contains 'churro1' through 'churro4'.
 
-
 ```
 tarta1 --+
          |

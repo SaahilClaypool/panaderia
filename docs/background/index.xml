@@ -19,7 +19,9 @@
       <guid>https://saahilclaypool.github.io/panaderia/background/bbr_congestion_based/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;Measuring bottleneck bandwidth and round-trip propagation time&lt;/p&gt;
-&lt;/blockquote&gt;</description>
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -40,7 +42,9 @@ Karlsruhe, Germany&lt;/p&gt;
 &lt;li&gt;&lt;p&gt;Estimate of bandwidth is available share.&lt;/p&gt;&lt;/li&gt;
 
 &lt;li&gt;&lt;p&gt;Esimate of bandwidth is &lt;em&gt;always&lt;/em&gt; too high.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;</description>
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -51,7 +55,9 @@ Karlsruhe, Germany&lt;/p&gt;
       <guid>https://saahilclaypool.github.io/panaderia/background/bbr_reproducing_in_lossy/</guid>
       <description>&lt;blockquote&gt;
 &lt;p&gt;Luke Hsia and Jervis Muindi&lt;/p&gt;
-&lt;/blockquote&gt;</description>
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -64,7 +70,9 @@ Karlsruhe, Germany&lt;/p&gt;
 &lt;p&gt;Mo Dong et. al. 15&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;A congestion control protocol using a &amp;lsquo;black-box&amp;rsquo; approach to networks. The algorithm relies on utility functions and mini experiments to adjust sending rate.&lt;/p&gt;</description>
+&lt;p&gt;A congestion control protocol using a &amp;lsquo;black-box&amp;rsquo; approach to networks. The algorithm relies on utility functions and mini experiments to adjust sending rate.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -77,7 +85,9 @@ Karlsruhe, Germany&lt;/p&gt;
 &lt;p&gt;Venkat Arun et. al. NSDI 2018&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;Uses a black-box approach to congestion control similar to PCC. This improves on PCC&amp;rsquo;s experiment idea and includes delay in its utility function.&lt;/p&gt;</description>
+&lt;p&gt;Uses a black-box approach to congestion control similar to PCC. This improves on PCC&amp;rsquo;s experiment idea and includes delay in its utility function.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>

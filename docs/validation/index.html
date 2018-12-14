@@ -3,7 +3,7 @@
 <head>
   <link href="//gmpg.org/xfn/11" rel="profile">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <meta name="generator" content="Hugo 0.51" />
+  <meta name="generator" content="Hugo 0.40.1" />
 
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -64,6 +64,8 @@
       <hr/>
       <h2><a href="https://saahilclaypool.github.io/panaderia/validation/single_flow/">Single flow</a></h2>
       <p>A single bbr flow should display a very regular cycle. Every 8 rtt&rsquo;s (round trip times) bbr should probe the bandwidth by increasing its sending rate, drain any queue that is built, and then return to a steady state. Every 10 seconds, the flow should completely drain the queue by throttling its speed, and then return to a normal sending rate.</p>
+
+<p></p>
     </div>
     
     
@@ -89,9 +91,10 @@ drain the queue and check for a lowest round trip time after some amount of seco
 
 <p>And our results, which look roughly similar:</p>
 
-<p><img src="https://saahilclaypool.github.io/panaderia/80m_multi_tbf.png" alt="Our Results" /></p>
+<p><img src="https://saahilclaypool.github.io/panaderia/results/4_throughput.svg" alt="Our Results" /></p>
 
-<p>See below for the configuration details and analysis</p>
+<p>See below for the configuration details and analysis
+</p>
     </div>
     
     

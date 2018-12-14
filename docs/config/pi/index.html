@@ -3,7 +3,7 @@
 <head>
   <link href="//gmpg.org/xfn/11" rel="profile">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <meta name="generator" content="Hugo 0.51" />
+  <meta name="generator" content="Hugo 0.40.1" />
 
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -76,6 +76,8 @@
   <p>For our servers and clients, we used 8 raspberry pi 3B+ running a modified Raspbian image. Each of these can be purchased for under $50. As they run Linux, they are able to run all of the different congestion control algorithms (specially, we are interested in BBR).</p>
 
 <p>We provide information on the steps we took to recompile the Kernel, as well as performance measurements for the Pis.</p>
+
+<p></p>
 
 <p>Each raspberry pi is configured to run <a href="https://www.raspberrypi.org/downloads/raspbian/">raspbian</a>, a modified version of debian for the raspberry pi. The kernel image is rebuilt from source to provide the latest support for bbr. The source for this image can be found <a href="https://github.com/SaahilClaypool/raspberry-linux">here</a>. The content below discusses how to modify, add</p>
 

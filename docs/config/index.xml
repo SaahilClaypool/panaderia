@@ -19,7 +19,9 @@
       <guid>https://saahilclaypool.github.io/panaderia/config/pi/</guid>
       <description>&lt;p&gt;For our servers and clients, we used 8 raspberry pi 3B+ running a modified Raspbian image. Each of these can be purchased for under $50. As they run Linux, they are able to run all of the different congestion control algorithms (specially, we are interested in BBR).&lt;/p&gt;
 
-&lt;p&gt;We provide information on the steps we took to recompile the Kernel, as well as performance measurements for the Pis.&lt;/p&gt;</description>
+&lt;p&gt;We provide information on the steps we took to recompile the Kernel, as well as performance measurements for the Pis.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -28,7 +30,9 @@
       <pubDate>Sat, 10 Nov 2018 16:45:46 -0500</pubDate>
       
       <guid>https://saahilclaypool.github.io/panaderia/config/router/</guid>
-      <description>&lt;p&gt;The router is an ubuntu desktop with 3 nic cards. One card is used for the normal &amp;lsquo;wide area network&amp;rsquo;, and the other two cards are used to route between the two raspberry pi subnets. This is done using netplan on ubuntu, and editing the dhcpd.conf to set up static ip addresses. Also, the host files for each machine are edited to make tests more convenient.&lt;/p&gt;</description>
+      <description>&lt;p&gt;The router is an ubuntu desktop with 3 nic cards. One card is used for the normal &amp;lsquo;wide area network&amp;rsquo;, and the other two cards are used to route between the two raspberry pi subnets. This is done using netplan on ubuntu, and editing the dhcpd.conf to set up static ip addresses. Also, the host files for each machine are edited to make tests more convenient.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -42,7 +46,9 @@
 &lt;ol&gt;
 &lt;li&gt;Dynamically select new protocols&lt;/li&gt;
 &lt;li&gt;Recompile and install new protocols&lt;/li&gt;
-&lt;/ol&gt;</description>
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -51,7 +57,9 @@
       <pubDate>Sun, 25 Nov 2018 00:00:00 +0000</pubDate>
       
       <guid>https://saahilclaypool.github.io/panaderia/config/run_experiment/</guid>
-      <description>&lt;p&gt;A typical experiment involves setting the congestion control protocols for each raspberry pi, setting the bandwidth and latency parameters for the router, and running a packet capture on each sender and client to monitor the flow.&lt;/p&gt;</description>
+      <description>&lt;p&gt;A typical experiment involves setting the congestion control protocols for each raspberry pi, setting the bandwidth and latency parameters for the router, and running a packet capture on each sender and client to monitor the flow.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
@@ -64,7 +72,42 @@
 
 &lt;p&gt;The goal is to parse each experiment, the 8 pcap files, into 8 csv files, and then to create plot like this:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;https://saahilclaypool.github.io/panaderia/80m_multi_tbf.png&#34; alt=&#34;plot&#34; /&gt;&lt;/p&gt;</description>
+&lt;p&gt;&lt;img src=&#34;https://saahilclaypool.github.io/panaderia/80m_multi_tbf.png&#34; alt=&#34;plot&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Improving the Experiment setup</title>
+      <link>https://saahilclaypool.github.io/panaderia/config/experiments_improved/</link>
+      <pubDate>Thu, 13 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://saahilclaypool.github.io/panaderia/config/experiments_improved/</guid>
+      <description>&lt;p&gt;Being able to quickly run &lt;em&gt;and rerun&lt;/em&gt; experiments is vital in ensuring that the tweaks we make to our testbed are having the effects that we expect. Specifically, we needed to be able to:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Setup the router with the correct parameters&lt;/p&gt;
+
+&lt;p&gt;Increasing or decreasing the bandwidth, latency, buffer size etc.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Orchestrate the raspberry pi startup&lt;/p&gt;
+
+&lt;p&gt;This involves starting up &lt;code&gt;N&lt;/code&gt; flows per raspberry pi, and measuring their performance over the course of the experiment session.&lt;/p&gt;
+
+&lt;p&gt;And, for each raspberry pi, needed to start a packet capture to analyze the results post experiment.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Poll the router as the experiment progresses&lt;/p&gt;
+
+&lt;p&gt;This allows us to see the &amp;lsquo;ground truth&amp;rsquo; for how many packets are in flight or dropped. (Currently, we only keep track of the router queue size).&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Pull in all of the captures to the &amp;lsquo;router&amp;rsquo;&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Parse the captures into CSV files and create consistent plots&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;By wrapping all of these procedures in a single script, we are able to quickly change configurations and create plots in an &lt;em&gt;identical&lt;/em&gt; manner. The reproducibility of this setup is key in allowing us to compare results across different configurations in a consistent manner.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>
