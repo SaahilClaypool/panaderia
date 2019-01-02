@@ -3,7 +3,7 @@
 <head>
   <link href="//gmpg.org/xfn/11" rel="profile">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <meta name="generator" content="Hugo 0.40.1" />
+  <meta name="generator" content="Hugo 0.47.1" />
 
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -66,6 +66,10 @@
 
 <p><img src="https://saahilclaypool.github.io/panaderia/optimal_operating.png" alt="BBR: Optimal Operating Point" />
 <em><a href="https://queue.acm.org/detail.cfm?id=3022184">BBR: Congestion-Based Congestion Control. Neal Cardwell et. al</a></em></p>
+
+<h1 id="bbr">BBR</h1>
+
+<p>BBR (bottleneck bandwidth and round-trip propagation time) is <em>not</em> strictly a loss based or delay based congestion, but rather a congestion based protocol that attempts to <em>infer</em> the optimal sending rate for an application by estimating two parameters: the perceived bandwidth and the round trip time. Using these parameters, BBR should also operate at the optimal sending rate shown above.</p>
 
 <p>In a perfect world, the optimal operating point is at the BDP (bandwidth delay product) which calculates the maximum packets that can be transmitted through a network without excess delay. But, operating at this point reliably in practice is still an active area of research.</p>
 

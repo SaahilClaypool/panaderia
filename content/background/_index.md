@@ -18,6 +18,10 @@ Delay based control aims to fix this problem by attempting to send at the maximu
 ![BBR: Optimal Operating Point](/optimal_operating.png)
 *[BBR: Congestion-Based Congestion Control. Neal Cardwell et. al](https://queue.acm.org/detail.cfm?id=3022184)*
 
+# BBR
+
+BBR (bottleneck bandwidth and round-trip propagation time) is *not* strictly a loss based or delay based congestion, but rather a congestion based protocol that attempts to *infer* the optimal sending rate for an application by estimating two parameters: the perceived bandwidth and the round trip time. Using these parameters, BBR should also operate at the optimal sending rate shown above.
+
 In a perfect world, the optimal operating point is at the BDP (bandwidth delay product) which calculates the maximum packets that can be transmitted through a network without excess delay. But, operating at this point reliably in practice is still an active area of research. 
 
 ## Background Work
