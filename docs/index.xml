@@ -190,6 +190,19 @@ Karlsruhe, Germany&lt;/p&gt;
     </item>
     
     <item>
+      <title>Cyclic Performance of BBR and Cubic</title>
+      <link>https://saahilclaypool.github.io/panaderia/validation/cyclic_performance/</link>
+      <pubDate>Tue, 01 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>https://saahilclaypool.github.io/panaderia/validation/cyclic_performance/</guid>
+      <description>&lt;p&gt;In the paper &amp;ldquo;Cycle and Divergence of Performance on TCP BBR&amp;rdquo; by Miyazawa and Sasaki, the authors show that when BBR and TCP are competing on the same bottleneck, their &amp;lsquo;share&amp;rsquo; of the bandwidth will &lt;em&gt;not&lt;/em&gt; be consistent. Rather, the dominant flows will cycle between cubic and BBR, where first BBR will dominate the flow for 10 seconds as cubic backs off, and then cubic will dominate the flow as is steals bandwidth during BBR&amp;rsquo;s rtt probe phase. We aim to confirm this in our &lt;code&gt;panaderia&lt;/code&gt; environment. This cyclic behavior shown in this paper is depicted here:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://saahilclaypool.github.io/panaderia/papers/cyclic.png&#34; alt=&#34;here&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
+    </item>
+    
+    <item>
       <title>Single flow</title>
       <link>https://saahilclaypool.github.io/panaderia/validation/single_flow/</link>
       <pubDate>Fri, 23 Nov 2018 10:01:37 -0500</pubDate>

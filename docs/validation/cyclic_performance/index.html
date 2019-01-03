@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.47.1" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Cyclic Performance of BBR and Cubic &middot; The Panaderia</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://saahilclaypool.github.io/panaderia/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="https://saahilclaypool.github.io/panaderia/favicon.ico">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="The Panaderia" />
+
+  
+</head>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+  <body class=" ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="https://saahilclaypool.github.io/panaderia/"><h1>The Panaderia</h1></a>
+      <p class="lead">
+       A test bed for tcp congestion control 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li><a href="https://saahilclaypool.github.io/panaderia/">Home</a> </li>
+        <li><a href="https://saahilclaypool.github.io/panaderia/background"> Background </a></li><li><a href="https://saahilclaypool.github.io/panaderia/config"> Configuration </a></li><li><a href="https://saahilclaypool.github.io/panaderia/validation"> Validation </a></li>
+      </ul>
+    </nav>
+
+    <p>Copyright © 2018 Saahil Claypool</p>
+  </div>
+</aside>
+
+    <main class="content container">
+    <div class="post">
+  <h1>Cyclic Performance of BBR and Cubic</h1>
+  <time datetime=2019-01-01T00:00:00Z class="post-date">Tue, Jan 1, 2019</time>
+  
+  <aside>
+    
+    <nav id="TableOfContents">
+<ul>
+<li><a href="#validation">Validation</a></li>
+<li><a href="#results">Results</a>
+<ul>
+<li><a href="#in-progress">In progress</a></li>
+</ul></li>
+</ul>
+</nav>
+  </aside>
+  
+  <p>In the paper &ldquo;Cycle and Divergence of Performance on TCP BBR&rdquo; by Miyazawa and Sasaki, the authors show that when BBR and TCP are competing on the same bottleneck, their &lsquo;share&rsquo; of the bandwidth will <em>not</em> be consistent. Rather, the dominant flows will cycle between cubic and BBR, where first BBR will dominate the flow for 10 seconds as cubic backs off, and then cubic will dominate the flow as is steals bandwidth during BBR&rsquo;s rtt probe phase. We aim to confirm this in our <code>panaderia</code> environment. This cyclic behavior shown in this paper is depicted here:</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/papers/cyclic.png" alt="here" /></p>
+
+<p></p>
+
+<p>In this, the &lsquo;troughs&rsquo; or the low regions of the BBR flows (whose throughput is shown on the top image) correspond to the peaks of the throughput of the Cubic flows (shown on the bottom image). This behavior is <em>bad</em>. Congestion protocols should aim to provide stable and reliable behavior, but this is indicating a very unstable throughput that ranges from roughly 0 mbit / second to a 100 mbit / second. This is a huge amount of variation.</p>
+
+<h1 id="validation">Validation</h1>
+
+<p>Given such a drastic result, we aimed to recreate this in our <code>panaderia</code> test environment. We did this by combining 3 queueing disciplines:</p>
+
+<ol>
+<li><p><code>Netem</code> with a huge buffer</p>
+
+<p>Netem is used to create the delay in the network. Because everything here is a local network with roughly 3ms rtt, we add a small (10ms) delay to the network. The bandwidth for this queue is roughly infinite as we <em>only</em> want to see drops at the TBF bottlneck.</p></li>
+
+<li><p><code>TBF</code> 80mbit token bucket filter with a large queue</p>
+
+<p>This, combined with the next token bucket filter create the 80mbit bottleneck. To avoid the token bucket filter burstiness, we use a second token bucket filter with a smaller bucket.</p></li>
+
+<li><p><code>TBF</code> 80mbit token bucket filter with a smaller bucket, and $225{,}000$ byte queue</p>
+
+<p>The BDP in this network is $bandwidth * delay$, so for our network, it is roughly $80 mbit * 30 ms = 300{,}000 bytes / second$. So, we set the buffer of the bottleneck to just below 1 BDP, at $225{,}000 bytes$. This ensures that, because BBR allows up to 2 BDP of data to be inflight (and thus 1 BDP of data to be in the queue), the queue can be saturated by the BBR flows.</p></li>
+</ol>
+
+<p><details><summary>Token bucket filter config</summary></p>
+
+<pre><code class="language-sh">sudo tc qdisc del dev enp3s0 root
+
+sudo tc qdisc add dev enp3s0 root handle 1:0 netem delay 10ms limit 1000
+sudo tc qdisc add dev enp3s0 parent 1:1 handle 10: tbf rate 80mbit buffer 1mbit limit 1000mbit 
+sudo tc qdisc add dev enp3s0 parent 10:1 handle 100: tbf rate 80mbit burst .05mbit limit 225000b
+# sudo tc qdisc add dev enp3s0 parent 100:1 handle 1000: tbf rate 80mbit burst .05mbit limit 1000mbit 
+
+tc -s qdisc ls dev enp3s0
+
+# https://netbeez.net/blog/how-to-use-the-linux-traffic-control/
+# https://wiki.linuxfoundation.org/networking/netem
+</code></pre>
+
+<p></details></p>
+
+<h1 id="results">Results</h1>
+
+<p>As the prior paper suggests, we also see cyclic performance between BBR and Cubic flows.</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/results/80m_shallow_throughput.svg" alt="Our results" /></p>
+
+<p>The cubic flows (shown blue and green), and the bbr flows (red and orange) roughly stay in lock-step. As one group goes up, the othe will be throttled. This rotates roughly every 10 seconds, which corresponds to BBR&rsquo;s round trip polling phase. This makes some sense, as BBR will back off during this phase, and thus allow cubic to ramp up and steal bandwidth. So, during the ramp up phase, there won&rsquo;t be any available buffer remaining. This will cause BBR to plateau at a much lower throughput than its fair share.</p>
+
+<h2 id="in-progress">In progress</h2>
+
+<p>calculate the loss rate.</p>
+</div>
+
+
+    </main>
+
+    
+  </body>
+</html>

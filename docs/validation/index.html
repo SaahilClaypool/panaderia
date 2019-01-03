@@ -28,6 +28,11 @@
   
 </head>
 
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
   <body class=" ">
   <aside class="sidebar">
   <div class="container sidebar-sticky">
@@ -57,6 +62,25 @@
 <h2 id="recreating-results">Recreating Results</h2>
 
 <div class="posts">
+
+  <article>
+    
+    <div>
+      <hr/>
+      <h2><a href="https://saahilclaypool.github.io/panaderia/validation/cyclic_performance/">Cyclic Performance of BBR and Cubic</a></h2>
+      <p>In the paper &ldquo;Cycle and Divergence of Performance on TCP BBR&rdquo; by Miyazawa and Sasaki, the authors show that when BBR and TCP are competing on the same bottleneck, their &lsquo;share&rsquo; of the bandwidth will <em>not</em> be consistent. Rather, the dominant flows will cycle between cubic and BBR, where first BBR will dominate the flow for 10 seconds as cubic backs off, and then cubic will dominate the flow as is steals bandwidth during BBR&rsquo;s rtt probe phase. We aim to confirm this in our <code>panaderia</code> environment. This cyclic behavior shown in this paper is depicted here:</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/papers/cyclic.png" alt="here" /></p>
+
+<p></p>
+    </div>
+    
+    
+    <div>
+      <a href="https://saahilclaypool.github.io/panaderia/validation/cyclic_performance/">Read More…</a>
+    </div>
+    
+  
 
   <article>
     
