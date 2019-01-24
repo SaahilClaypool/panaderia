@@ -6,8 +6,8 @@ canonifyurls = true
 # theme = "hyde"
 
 [params]
-    description = "A test bed for tcp congestion control"
-    copyright= "Copyright © 2018 Saahil Claypool"
+    description = "A test bed for TCP congestion control research"
+    copyright= "Copyright © 2019 Saahil Claypool"
 
 [menu]
 
@@ -33,3 +33,10 @@ canonifyurls = true
     pre = ""
     url = "/validation"
     weight = -100
+
+  [[menu.main]]
+    identifier = "results"
+    name = "Results"
+    pre = ""
+    url = "/results"
+    weight = -90

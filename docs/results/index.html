@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+  <link href="//gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.49" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Experimental Results &middot; The Panaderia</title>
+
+  
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/print.css" media="print">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/poole.css">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/syntax.css">
+  <link type="text/css" rel="stylesheet" href="https://saahilclaypool.github.io/panaderia/css/hyde.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Abril+Fatface|PT+Sans:400,400i,700">
+
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="https://saahilclaypool.github.io/panaderia/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="https://saahilclaypool.github.io/panaderia/favicon.ico">
+
+  
+  <link href="https://saahilclaypool.github.io/panaderia/results/index.xml" rel="alternate" type="application/rss+xml" title="The Panaderia" />
+
+  
+</head>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+});
+</script>
+  <body class=" ">
+  <aside class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="https://saahilclaypool.github.io/panaderia/"><h1>The Panaderia</h1></a>
+      <p class="lead">
+       A test bed for TCP congestion control research 
+      </p>
+    </div>
+
+    <nav>
+      <ul class="sidebar-nav">
+        <li><a href="https://saahilclaypool.github.io/panaderia/">Home</a> </li>
+        <li><a href="https://saahilclaypool.github.io/panaderia/background"> Background </a></li><li><a href="https://saahilclaypool.github.io/panaderia/config"> Configuration </a></li><li><a href="https://saahilclaypool.github.io/panaderia/validation"> Validation </a></li><li><a href="https://saahilclaypool.github.io/panaderia/results"> Results </a></li>
+      </ul>
+    </nav>
+
+    <p>Copyright © 2019 Saahil Claypool</p>
+  </div>
+</aside>
+
+    <main class="content container">
+    
+
+<h1 id="experimental-results">Experimental Results</h1>
+
+<p>Our focus was on determining exactly why BBR behaves the way it does in shallow buffers,
+and when competing with CUBIC.</p>
+
+<h2 id="shallow-buffers">Shallow Buffers</h2>
+
+<p>BBR has had a notorious problem dealing with shallow buffers. Namely, this is because
+BBR does not use loss as a congestion metric. So, when it sends too much data, it does
+does not slow down its sending rate accordingly.</p>
+
+<blockquote>
+<p>Note: in more recent proposals, there is talk of &ldquo;creating headroom&rdquo; when there is loss. But, we do not
+think that is the root of the issue.</p>
+</blockquote>
+
+<h3 id="standing-queue">Standing Queue</h3>
+
+<p>In theory, BBR operates at Kleinrock&rsquo;s optimal operating point. That is, BBR <em>should</em> cap the inflight data
+to exactly the BDP. That, combined with the fact that BBR <em>paces</em> its sending rate to match the estimating
+throughput, should ensure that the bottleneck router never builds up any queue.</p>
+
+<p>But, in practice, this does not happen. BBR slightly over estimates the throughput when there is more than a
+single flow in the network. Additionally, BBR dooes <em>not</em> cap the inflight data to just 1BDP. Rather,
+BBR will allow up to 2 * BDP to be inflight at any point. This is to ensure that when ACKs are aggregated
+(such as on most mobile networks), BBR is still able to send enough packets to fully utilize the network.</p>
+
+<p>This 2 BDP CWND means that, if one BDP is &lsquo;on the wire&rsquo; then the other BDP&rsquo;s worth of packets must queued
+at the bottleneck router. This means that BBR <em>should</em> create a standing queue of 1 BDP. To confirm this,
+we ran a trial on our testbed.</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/results/large_bbr_4_result_queue_(bytes).svg" alt="4 BBR flows competing with a large buffer" /></p>
+
+<p>We ran this trial with 4 BBR flows, a 200,000 byte router queue, 25ms RTT, and and 80mbit throughput.
+As with all our tests, we recorded the performance of the flows tracked the router queue sizes.</p>
+
+<p>Sure enough, the queue size is <em>constantly</em> at around 28,000 or more bytes. Given our throughput
+and RTT settings, this corresponds to <strong>1.12</strong> times the BDP. And, because the router
+can send 1 Bandwidth&rsquo;s worth of packets per second (by definition of bandwidth), this
+constant router queue corresponds to 1 RTT_Prop, where RTT prop is the minimum 25ms delay.
+This increases the minimum delay by 100%.</p>
+
+<p>In this test, the RTT is fairly low, so a one BDP router buffer adds <em>only</em> 25ms of extra delay. But,
+imagine a satellite link with a 500ms delay - this one BDP buffer would add an <em>additional</em> 500ms delay!</p>
+
+<p>As one BDP scales with both throughput and latency, high throughput - high latency connections
+have the largest BDP. This means that BBR will create larger router queues on these large BDP networks.
+So, what happens when the router queue is <em>smaller</em> than the 1 BDP mark?</p>
+
+<h3 id="shallow-buffers-less-than-one-bdp">&lsquo;Shallow&rsquo; Buffers: Less than one BDP</h3>
+
+<p>For BBR, a shallow buffer is <em>proportional to the bdp</em> as the standing queue created at the router is itself
+proportional to the BDP. When the maximum router queue is <em>less</em> than the BDP, then BBR creates enormous amounts
+of loss.</p>
+
+<p>We found this by doing the following: We ran different numbers of BBR flows competing at the same bottleneck
+router at different throughputs and for different buffer maximum queue lengths. For each of these, we recorded
+the loss rate of the <em>steady state</em> part of the BBR connection (we ignore startup, as BBR tends to create even more
+loss during its startup). The results of 4 BBR flows competing for 80mbit throughput on a 25ms latency
+with different max router queues is shown below.</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/results/bbr_4_80_drop_rate.svg" alt="Drop Rate" /></p>
+
+<p>This shows that shallow buffers, any amount smaller than 1.5 BDP, BBR creates a <em>huge</em> (up to 12%) amount of loss.
+The fact that the queue must be at least 1.5 * BDP is due to the fact that BBR always over estimates the
+throughput when competing with other flows. This causes the inflight CWND to be slightly too large.</p>
+
+<p>For reference, here is the loss rate of 4 cubic flows in the same conditions:</p>
+
+<p>TODO: maybe rerun with just cubic to show it never gets much loss&hellip;</p>
+
+<p>We ran this same test with 40mbit, 80mbit, and 120mbit. And, the shape of the curve is always the same - the
+loss rate is extremely high until the queue is at least 1.5 BDP.</p>
+
+<h2 id="competing-with-cubic">Competing with Cubic</h2>
+
+<p>Because CUBIC is a loss-based congestion control protocol (and the most common congestion control protocol),
+BBR&rsquo;s high loss rate in certain conditions can be problematic.</p>
+
+<h3 id="shallow-buffers-loss-ignorance">Shallow Buffers: Loss Ignorance</h3>
+
+<p>When the buffers are smaller than 1.5 BDP, BBR will create a large amount of ambient loss by itself.
+This high loss will cause CUBIC to back off and thus BBR will dominate the throughput. We tested this in a similar
+manner: we ran 2 CUBIC flows against 2 BBR flows on 40, 80, and 120mbit links with varying queue sizes
+proportional to the BDP.</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/results/80m_cubic_bbr_shallow_throughput.svg" alt="Shallow BBR vs Cubic" /></p>
+
+<p>As shown in this graph of a buffer that is 125000 bytes (roughly 0.5 BDP), BBR will dominate. This makes sense when
+we look at the drop rate percent per second, which is very high:</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/results/80m_cubic_bbr_shallow_droprate_125000.svg" alt="Shallow BBR vs Cubic Droprate" /></p>
+
+<h3 id="medium-buffers-cyclic-performance">Medium Buffers: Cyclic Performance</h3>
+
+<p>While unfairness bad, a more problematic result is the competition between CUBIC and BBR
+in <em>meidum sized</em> buffers. Namely, because CUBIC operates with a full router queue, BBRs
+transition between probing the bandwidth (which causes loss) and draining the queue (which
+allows CUBIC to recover lost throughput), cause a extremely cyclic performance
+between the throughput shares for BBR and Cubic. This is unstable network condition is very bad
+for network applications.</p>
+
+<p>This plot throughput for BBR and CUBIC competing for a 1.75 BDP buffer.</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/results/80m_bbr_cubic_cyclic_throughput_437500.svg" alt="Cyclic Throughput" /></p>
+
+<p>So, why does this happen?</p>
+
+<p>To better understand the behavior, we can look at the loss rate over the same time frame:</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/results/80m_bbr_cubic_cyclic_droprate_437500.svg" alt="Cyclic Droprate" /></p>
+
+<p>The cycle has a length of 20 seconds. This is not a coincidence - BBR drains
+the que every <em>10</em> seconds. The &lsquo;valley&rsquo; in drop rate where it is relatively
+low correspond to CUBIC flows (blue and orange) being relatively &lsquo;on top&rsquo;.
+This can be seen for the 10 seconds 80 - 90 seconds into the trace.</p>
+
+<p>After 10 seconds, BBR will drain <em>its queue</em> for the <em>minimum RTT</em>. Because BBR is &lsquo;squashed&rsquo;, it does not
+have many packets in the queue, so removing its packets does not change the RTT. BBR will thus measure
+a relatively high RTT, and thus predict the BDP to be much too large. This causes BBR to ramp up
+quickly and create a large standing queue, as the queue BBR creates is proportional to the BDP it estimates.</p>
+
+<p>This causes a large spike in loss, seen around second 100 in the drop rate plot. This loss in turn causes
+CUBIC to decrease its CWND to almost nothing as CUBIC responds very quickly to loss. BBR will continue to
+dominate the throughput for 10 seconds, where it will drain the queue again to estimate the minimum RTT. BBR
+will have the majority of packets in the queue as CUBIC still has a small CWND, so draining the queue will
+find the <em>TRUE</em> rtt prop value. This will be much smaller than the previous estimated rtt prop value.</p>
+
+<p>Because the estimated rtt is small again, BBR will decrease its CWND accordingly. This will allow CUBIC to
+ramp up again as there is now free space in the router queue that can be taken without causing loss.
+Thus, the cycle will repeat, as the next time BBR drains the queue, it will be unable to drain CUBIC&rsquo;s traffic
+to estimate the RTT.</p>
+
+<h3 id="large-buffers-cwnd-strangling">Large Buffers: CWND Strangling</h3>
+
+<p>When the buffer is very large, the cyclic performance continues, but BBR will
+obtain less of the network share. This is because BBR will still cap its CWND
+proportionally to the BDP, and the queue size is much larger than the BDP.
+This will cause slightly lower drop rates, and thus slightly higher cubic performance.</p>
+
+<p>The plot below shows this behavior when CUBIC and BBR are competing for a
+2 BDP router queue.</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/results/80m_bbr_vs_cubic_cyclic_throughput_200000.svg" alt="bbr vs cubic cyclic throughput" /></p>
+
+<h3 id="summary">Summary</h3>
+
+<p>The proportion of throughput for BBR and CUBIC in terms of the router queue length can be seen here:</p>
+
+<p><img src="https://saahilclaypool.github.io/panaderia/results/q_throughput.svg" alt="bbr vs cubic quartile throughput" /></p>
+
+<p>This plot shows the 25% percentile to 75% throughput for the total BBR throughput and the total CUBIC
+throughput as a function of the queue size. As seen here, the <em>range</em> in throughput is huge.
+This is caused by the cyclic performance between CUBIC and BBR. At any queue size less than 1.5 BDP,
+BBR tends to dominate cubic as there is no cyclic performance. This can be seen by the relatively
+tight quartiles.</p>
+
+<p>At around 5 BDP, the large buffer causes CUBIC to dominate the performance, but the huge range
+in performance indicates that BBR and CUBIC still have a cyclic behavior where one will dominate for some
+period of time before the other takes the majority of the bandwidth.</p>
+
+<h2 id="what-can-bbr-do-better">What can BBR do Better?</h2>
+
+<div class="posts">
+
+</div>
+    </main>
+
+    
+  </body>
+</html>
