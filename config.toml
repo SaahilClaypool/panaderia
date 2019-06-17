@@ -11,6 +11,13 @@ canonifyurls = true
 
 [menu]
 
+  [[menu.main]]
+    identifier = "publications"
+    name = "Publications"
+    pre = ""
+    url = "/publications"
+    weight = -140
+
 
   [[menu.main]]
   identifier = "repo"
