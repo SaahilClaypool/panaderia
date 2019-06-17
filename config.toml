@@ -11,7 +11,13 @@ canonifyurls = true
 
 [menu]
 
-  
+
+  [[menu.main]]
+  identifier = "repo"
+  name = "Github Repository"
+  pre = ""
+  url = "https://github.com/SaahilClaypool/rpi"
+  weight = -130
 
   [[menu.main]]
     identifier = "background"

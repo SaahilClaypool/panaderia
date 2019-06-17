@@ -3,7 +3,7 @@
 <head>
   <link href="//gmpg.org/xfn/11" rel="profile">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <meta name="generator" content="Hugo 0.49" />
+  <meta name="generator" content="Hugo 0.55.6" />
 
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -46,7 +46,7 @@ MathJax.Hub.Config({
     <nav>
       <ul class="sidebar-nav">
         <li><a href="https://saahilclaypool.github.io/panaderia/">Home</a> </li>
-        <li><a href="https://saahilclaypool.github.io/panaderia/background"> Background </a></li><li><a href="https://saahilclaypool.github.io/panaderia/config"> Configuration </a></li><li><a href="https://saahilclaypool.github.io/panaderia/validation"> Validation </a></li><li><a href="https://saahilclaypool.github.io/panaderia/results"> Results </a></li>
+        <li><a href="https://github.com/SaahilClaypool/rpi"> Github Repository </a></li><li><a href="https://saahilclaypool.github.io/panaderia/background"> Background </a></li><li><a href="https://saahilclaypool.github.io/panaderia/config"> Configuration </a></li><li><a href="https://saahilclaypool.github.io/panaderia/validation"> Validation </a></li><li><a href="https://saahilclaypool.github.io/panaderia/results"> Results </a></li>
       </ul>
     </nav>
 
@@ -75,8 +75,6 @@ MathJax.Hub.Config({
   <p>In the paper &ldquo;Cycle and Divergence of Performance on TCP BBR&rdquo; by Miyazawa and Sasaki, the authors show that when BBR and TCP are competing on the same bottleneck, their &lsquo;share&rsquo; of the bandwidth will <em>not</em> be consistent. Rather, the dominant flows will cycle between cubic and BBR, where first BBR will dominate the flow for 10 seconds as cubic backs off, and then cubic will dominate the flow as is steals bandwidth during BBR&rsquo;s rtt probe phase. We aim to confirm this in our <code>panaderia</code> environment. This cyclic behavior shown in this paper is depicted here:</p>
 
 <p><img src="https://saahilclaypool.github.io/panaderia/papers/cyclic.png" alt="here" /></p>
-
-<p></p>
 
 <p>In this, the &lsquo;troughs&rsquo; or the low regions of the BBR flows (whose throughput is shown on the top image) correspond to the peaks of the throughput of the Cubic flows (shown on the bottom image). This behavior is <em>bad</em>. Congestion protocols should aim to provide stable and reliable behavior, but this is indicating a very unstable throughput that ranges from roughly 0 mbit / second to a 100 mbit / second. This is a huge amount of variation.</p>
 

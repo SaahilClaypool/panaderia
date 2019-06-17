@@ -3,7 +3,7 @@
 <head>
   <link href="//gmpg.org/xfn/11" rel="profile">
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
-  <meta name="generator" content="Hugo 0.49" />
+  <meta name="generator" content="Hugo 0.55.6" />
 
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -46,7 +46,7 @@ MathJax.Hub.Config({
     <nav>
       <ul class="sidebar-nav">
         <li><a href="https://saahilclaypool.github.io/panaderia/">Home</a> </li>
-        <li><a href="https://saahilclaypool.github.io/panaderia/background"> Background </a></li><li><a href="https://saahilclaypool.github.io/panaderia/config"> Configuration </a></li><li><a href="https://saahilclaypool.github.io/panaderia/validation"> Validation </a></li><li><a href="https://saahilclaypool.github.io/panaderia/results"> Results </a></li>
+        <li><a href="https://github.com/SaahilClaypool/rpi"> Github Repository </a></li><li><a href="https://saahilclaypool.github.io/panaderia/background"> Background </a></li><li><a href="https://saahilclaypool.github.io/panaderia/config"> Configuration </a></li><li><a href="https://saahilclaypool.github.io/panaderia/validation"> Validation </a></li><li><a href="https://saahilclaypool.github.io/panaderia/results"> Results </a></li>
       </ul>
     </nav>
 
@@ -97,8 +97,6 @@ churro1--+
       <p>For our servers and clients, we used 8 raspberry pi 3B+ running a modified Raspbian image. Each of these can be purchased for under $50. As they run Linux, they are able to run all of the different congestion control algorithms (specially, we are interested in BBR).</p>
 
 <p>We provide information on the steps we took to recompile the Kernel, as well as performance measurements for the Pis.</p>
-
-<p></p>
     </div>
     
     
@@ -114,8 +112,6 @@ churro1--+
       <hr/>
       <h2><a href="https://saahilclaypool.github.io/panaderia/config/router/">The Router</a></h2>
       <p>The router is an ubuntu desktop with 3 nic cards. One card is used for the normal &lsquo;wide area network&rsquo;, and the other two cards are used to route between the two raspberry pi subnets. This is done using netplan on ubuntu, and editing the dhcpd.conf to set up static ip addresses. Also, the host files for each machine are edited to make tests more convenient.</p>
-
-<p></p>
     </div>
     
     
@@ -136,8 +132,6 @@ churro1--+
 <li>Dynamically select new protocols</li>
 <li>Recompile and install new protocols</li>
 </ol>
-
-<p></p>
     </div>
     
     
@@ -153,8 +147,6 @@ churro1--+
       <hr/>
       <h2><a href="https://saahilclaypool.github.io/panaderia/config/run_experiment/">Running an Experiment</a></h2>
       <p>A typical experiment involves setting the congestion control protocols for each raspberry pi, setting the bandwidth and latency parameters for the router, and running a packet capture on each sender and client to monitor the flow.</p>
-
-<p></p>
     </div>
     
     
@@ -174,8 +166,6 @@ churro1--+
 <p>The goal is to parse each experiment, the 8 pcap files, into 8 csv files, and then to create plot like this:</p>
 
 <p><img src="https://saahilclaypool.github.io/panaderia/80m_multi_tbf.png" alt="plot" /></p>
-
-<p></p>
     </div>
     
     
@@ -213,8 +203,6 @@ churro1--+
 </ol>
 
 <p>By wrapping all of these procedures in a single script, we are able to quickly change configurations and create plots in an <em>identical</em> manner. The reproducibility of this setup is key in allowing us to compare results across different configurations in a consistent manner.</p>
-
-<p></p>
     </div>
     
     
